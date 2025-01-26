@@ -15,7 +15,7 @@
 
 -	script	Healer	-1,{
 
-	.@Price = 0;	// Zeny required for heal
+	.@Price = 100;	// Zeny required for heal
 	.@Buffs = 0;	// Also buff players? (1: yes / 0: no)
 	.@Delay = 0;	// Heal delay, in seconds
 
