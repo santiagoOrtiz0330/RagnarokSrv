@@ -2090,7 +2090,7 @@ ACMD_FUNC(go)
 		{ MAP_COMODO,      189, 149 }, //  8=Comodo
 		{ MAP_YUNO,        158, 180 }, //  9=Yuno
 		{ MAP_AMATSU,      115, 144 }, // 10=Amatsu
-		{ MAP_GONRYUN,     169, 112 }, // 11=Gonryun
+		{ MAP_GONRYUN,     159, 115 }, // 11=Gonryun
 		{ MAP_UMBALA,       92, 154 }, // 12=Umbala
 		{ MAP_NIFLHEIM,     194, 186 }, // 13=Niflheim
 		{ MAP_LOUYANG,     217, 100 }, // 14=Louyang
