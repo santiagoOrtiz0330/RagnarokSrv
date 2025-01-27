@@ -2076,50 +2076,50 @@ ACMD_FUNC(go)
 		int32 x, y;
 	} data[] = {
 		{ MAP_PRONTERA,    156, 163 }, //  0=Prontera
-		{ MAP_MORROC,      156,  93 }, //  1=Morroc
-		{ MAP_GEFFEN,      119,  59 }, //  2=Geffen
-		{ MAP_PAYON,       162, 233 }, //  3=Payon
-		{ MAP_ALBERTA,     192, 147 }, //  4=Alberta
+		{ MAP_MORROC,      161,  90 }, //  1=Morroc
+		{ MAP_GEFFEN,      120,  59 }, //  2=Geffen
+		{ MAP_PAYON,       172, 104 }, //  3=Payon
+		{ MAP_ALBERTA,     28, 235 }, //  4=Alberta
 #ifdef RENEWAL
-		{ MAP_IZLUDE,      128, 146 }, //  5=Izlude (Renewal)
+		{ MAP_IZLUDE,      127, 144 }, //  5=Izlude (Renewal)
 #else
-		{ MAP_IZLUDE,      128, 114 }, //  5=Izlude
+		{ MAP_IZLUDE,      127, 144 }, //  5=Izlude
 #endif
-		{ MAP_ALDEBARAN,   140, 131 }, //  6=Al de Baran
-		{ MAP_LUTIE,       147, 134 }, //  7=Lutie
-		{ MAP_COMODO,      209, 143 }, //  8=Comodo
-		{ MAP_YUNO,        157,  51 }, //  9=Yuno
-		{ MAP_AMATSU,      198,  84 }, // 10=Amatsu
-		{ MAP_GONRYUN,     160, 120 }, // 11=Gonryun
-		{ MAP_UMBALA,       89, 157 }, // 12=Umbala
-		{ MAP_NIFLHEIM,     21, 153 }, // 13=Niflheim
-		{ MAP_LOUYANG,     217,  40 }, // 14=Louyang
+		{ MAP_ALDEBARAN,   140, 114 }, //  6=Al de Baran
+		{ MAP_LUTIE,       148, 130 }, //  7=Lutie
+		{ MAP_COMODO,      189, 149 }, //  8=Comodo
+		{ MAP_YUNO,        158, 180 }, //  9=Yuno
+		{ MAP_AMATSU,      115, 144 }, // 10=Amatsu
+		{ MAP_GONRYUN,     169, 112 }, // 11=Gonryun
+		{ MAP_UMBALA,       92, 154 }, // 12=Umbala
+		{ MAP_NIFLHEIM,     194, 186 }, // 13=Niflheim
+		{ MAP_LOUYANG,     217, 100 }, // 14=Louyang
 #ifdef RENEWAL
 		{ MAP_NOVICE,       18, 26  }, // 15=Training Grounds (Renewal)
 #else
 		{ MAP_NOVICE,       53, 111 }, // 15=Training Grounds
 #endif
 		{ MAP_JAIL,         23,  61 }, // 16=Prison
-		{ MAP_JAWAII,      249, 127 }, // 17=Jawaii
-		{ MAP_AYOTHAYA,    151, 117 }, // 18=Ayothaya
-		{ MAP_EINBROCH,     64, 200 }, // 19=Einbroch
+		{ MAP_JAWAII,      241, 142 }, // 17=Jawaii
+		{ MAP_AYOTHAYA,    218, 174 }, // 18=Ayothaya
+		{ MAP_EINBROCH,     234, 197 }, // 19=Einbroch
 		{ MAP_LIGHTHALZEN, 158,  92 }, // 20=Lighthalzen
-		{ MAP_EINBECH,      70,  95 }, // 21=Einbech
+		{ MAP_EINBECH,      172, 129 }, // 21=Einbech
 		{ MAP_HUGEL,        96, 145 }, // 22=Hugel
 		{ MAP_RACHEL,      130, 110 }, // 23=Rachel
-		{ MAP_VEINS,       216, 123 }, // 24=Veins
+		{ MAP_VEINS,       217, 128 }, // 24=Veins
 		{ MAP_MOSCOVIA,    223, 184 }, // 25=Moscovia
 		{ MAP_MIDCAMP,     180, 240 }, // 26=Midgard Camp
 		{ MAP_MANUK,       282, 138 }, // 27=Manuk
 		{ MAP_SPLENDIDE,   201, 147 }, // 28=Splendide
-		{ MAP_BRASILIS,    182, 239 }, // 29=Brasilis
+		{ MAP_BRASILIS,    196, 212 }, // 29=Brasilis
 		{ MAP_DICASTES,    198, 187 }, // 30=El Dicastes
-		{ MAP_MORA,         44, 151 }, // 31=Mora
+		{ MAP_MORA,         52, 143 }, // 31=Mora
 		{ MAP_DEWATA,      200, 180 }, // 32=Dewata
-		{ MAP_MALANGDO,    140, 114 }, // 33=Malangdo Island
-		{ MAP_MALAYA,      242, 211 }, // 34=Malaya Port
+		{ MAP_MALANGDO,    131, 127 }, // 33=Malangdo Island
+		{ MAP_MALAYA,      237, 195 }, // 34=Malaya Port
 		{ MAP_ECLAGE,      110,  39 }, // 35=Eclage
-		{ MAP_LASAGNA,     193, 182 }, // 36=Lasagna
+		{ MAP_LASAGNA,     180, 201 }, // 36=Lasagna
 	};
 
 	nullpo_retr(-1, sd);
