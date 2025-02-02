@@ -1,5 +1,5 @@
 //===== rAthena Script =======================================
-//= Healer
+//= Buffer
 //===== By: ==================================================
 //= Euphy
 //===== Current Version: =====================================
@@ -7,7 +7,7 @@
 //===== Compatible With: =====================================
 //= rAthena Project
 //===== Description: =========================================
-//= Basic healer script.
+//= Basic Buffer script.
 //===== Additional Comments: =================================
 //= 1.0 Initial script.
 //= 1.1 Aligned coordinates with @go.
@@ -15,54 +15,74 @@
 
 -	script	Buffer	-1,{
 
-	.@Price = 100;	// Zeny required for heal
-	.@Buffs = 1;	// Also buff players? (1: yes / 0: no)
+	.@PriceHeal = 100;	// Zeny required for heal
+	.@PriceEndow = 150;
+	.@priceLink = 200;
 	.@Delay = 0;	// Heal delay, in seconds
 
 	select("Heal:Weapon Enchanment:Soul Link");
 	switch ( @menu ) {
-		case 1: specialeffect2 EF_HEAL2;
-			percentheal 100,100;
-	
-			specialeffect2 EF_INCAGILITY;
-			sc_start SC_INCREASEAGI,600000,10;
-			specialeffect2 EF_BLESSING;
-			sc_start SC_BLESSING,600000,10;
-			break;
+		case 1:
+			if(Zeny<.PriceHeal){
+				mes "[Buffer]", 'No Tienes Suficiente Zeny.'
+				end;
+			}
+			else{
+				specialeffect2 EF_HEAL2;
+				percentheal 100,100;
+		
+				specialeffect2 EF_INCAGILITY;
+				sc_start SC_INCREASEAGI,600000,10;
+				specialeffect2 EF_BLESSING;
+				sc_start SC_BLESSING,600000,10;
+			}	
+			break;	
+			
 		case 2:
+			if(Zeny<.PriceEndow){
+				mes "[Buffer]", 'No Tienes Suficiente Zeny xD'
+				end;
+			}
+			else{}
+			
 			break;
 		case 3:
-			switch ( basejob ) {
+			if(Zeny<.PriceLink){
+				mes "[Buffer]", 'No Tienes Suficiente Zeny xD'
+				end;
+			}
+			else{
+				switch ( basejob ) {
 
-			case Job_Alchemist: set .@spirit, 445; break;
+				case Job_Alchemist: set .@spirit, 445; break;
 
-			case Job_Monk: set .@spirit, 447; break;
+				case Job_Monk: set .@spirit, 447; break;
 
-			case Job_Star_Gladiator: set .@spirit, 448; break;
+				case Job_Star_Gladiator: set .@spirit, 448; break;
 
-			case Job_Sage: set .@spirit, 449; break;
+				case Job_Sage: set .@spirit, 449; break;
 
-			case Job_Crusader: set .@spirit, 450; break;
+				case Job_Crusader: set .@spirit, 450; break;
 
-			case Job_SuperNovice: set .@spirit, 451; break;
+				case Job_SuperNovice: set .@spirit, 451; break;
 
-			case Job_Knight: set .@spirit, 452; break;
+				case Job_Knight: set .@spirit, 452; break;
 
-			case Job_Wizard: set .@spirit, 453; break;
+				case Job_Wizard: set .@spirit, 453; break;
 
-			case Job_Priest: set .@spirit, 454; break;
+				case Job_Priest: set .@spirit, 454; break;
 
-			case Job_Bard: case Job_Dancer: set .@spirit, 455; break;
+				case Job_Bard: case Job_Dancer: set .@spirit, 455; break;
 
-			case Job_Rogue: set .@spirit, 456; break;
+				case Job_Rogue: set .@spirit, 456; break;
 
-			case Job_Assassin: set .@spirit, 457; break;
+				case Job_Assassin: set .@spirit, 457; break;
 
-			case Job_Blacksmith: set .@spirit, 458; break;
+				case Job_Blacksmith: set .@spirit, 458; break;
 
-			case Job_Hunter: set .@spirit, 460; break;
+				case Job_Hunter: set .@spirit, 460; break;
 
-			case Job_Soul_Linker: set .@spirit, 461; break;
+				case Job_Soul_Linker: set .@spirit, 461; break;
 
 			default:
 
@@ -79,6 +99,8 @@
 			skilleffect .@spirit, 5;
 
 			}
+			}
+			
 	} 
 	end;
 
@@ -87,42 +109,42 @@
 
 // Duplicates
 //============================================================
-alberta,25,240,6	duplicate(Healer)	Healer#alb	936
-aldebaran,135,118,6	duplicate(Healer)	Healer#alde	936
-amatsu,200,79,4	duplicate(Healer)	Healer#ama	936
-ayothaya,207,169,6	duplicate(Healer)	Healer#ayo	936
-comodo,184,158,6	duplicate(Healer)	Healer#com	936
-einbech,57,36,6	duplicate(Healer)	Healer#einbe	936
-einbroch,57,202,6	duplicate(Healer)	Healer#einbr	936
-geffen,115,69,6	duplicate(Healer)	Healer#gef	936
-gonryun,156,122,6	duplicate(Healer)	Healer#gon	936
-hugel,89,150,6	duplicate(Healer)	Healer#hug	936
-izlude,121,150,6	duplicate(Healer)	Healer#izl	936	//Pre-RE: (125,118)
-jawaii,250,139,4	duplicate(Healer)	Healer#jaw	936
-lighthalzen,152,100,6	duplicate(Healer)	Healer#lhz	936
-louyang,226,103,4	duplicate(Healer)	Healer#lou	936
-manuk,272,144,6	duplicate(Healer)	Healer#man	936
-mid_camp,203,289,6	duplicate(Healer)	Healer#mid	936
-moc_ruins,72,164,4	duplicate(Healer)	Healer#moc	936
-morocc,153,97,6	duplicate(Healer)	Healer#mor	936
-moscovia,220,191,4	duplicate(Healer)	Healer#mos	936
-niflheim,212,182,5	duplicate(Healer)	Healer#nif	936
-payon,179,106,4	duplicate(Healer)	Healer#pay	936
-prontera,162,193,4	duplicate(Healer)	Healer#prt	936
-rachel,125,116,6	duplicate(Healer)	Healer#rac	936
-splendide,201,153,4	duplicate(Healer)	Healer#spl	936
-thor_camp,249,74,4	duplicate(Healer)	Healer#thor	936
-umbala,105,148,3	duplicate(Healer)	Healer#umb	936
-veins,217,121,4	duplicate(Healer)	Healer#ve	936
-xmas,143,136,4	duplicate(Healer)	Healer#xmas	936
-yuno,164,45,4	duplicate(Healer)	Healer#yuno	936
+alberta,25,240,6	duplicate(Buffer)	Buffer#alb	936
+aldebaran,135,118,6	duplicate(Buffer)	Buffer#alde	936
+amatsu,200,79,4	duplicate(Buffer)	Buffer#ama	936
+ayothaya,207,169,6	duplicate(Buffer)	Buffer#ayo	936
+comodo,184,158,6	duplicate(Buffer)	Buffer#com	936
+einbech,57,36,6	duplicate(Buffer)	Buffer#einbe	936
+einbroch,57,202,6	duplicate(Buffer)	Buffer#einbr	936
+geffen,115,69,6	duplicate(Buffer)	Buffer#gef	936
+gonryun,156,122,6	duplicate(Buffer)	Buffer#gon	936
+hugel,89,150,6	duplicate(Buffer)	Buffer#hug	936
+izlude,121,150,6	duplicate(Buffer)	Buffer#izl	936	//Pre-RE: (125,118)
+jawaii,250,139,4	duplicate(Buffer)	Buffer#jaw	936
+lighthalzen,152,100,6	duplicate(Buffer)	Buffer#lhz	936
+louyang,226,103,4	duplicate(Buffer)	Buffer#lou	936
+manuk,272,144,6	duplicate(Buffer)	Buffer#man	936
+mid_camp,203,289,6	duplicate(Buffer)	Buffer#mid	936
+moc_ruins,72,164,4	duplicate(Buffer)	Buffer#moc	936
+morocc,153,97,6	duplicate(Buffer)	Buffer#mor	936
+moscovia,220,191,4	duplicate(Buffer)	Buffer#mos	936
+niflheim,212,182,5	duplicate(Buffer)	Buffer#nif	936
+payon,179,106,4	duplicate(Buffer)	Buffer#pay	936
+prontera,162,193,4	duplicate(Buffer)	Buffer#prt	936
+rachel,125,116,6	duplicate(Buffer)	Buffer#rac	936
+splendide,201,153,4	duplicate(Buffer)	Buffer#spl	936
+thor_camp,249,74,4	duplicate(Buffer)	Buffer#thor	936
+umbala,105,148,3	duplicate(Buffer)	Buffer#umb	936
+veins,217,121,4	duplicate(Buffer)	Buffer#ve	936
+xmas,143,136,4	duplicate(Buffer)	Buffer#xmas	936
+yuno,164,45,4	duplicate(Buffer)	Buffer#yuno	936
 
 // Duplicates (Renewal)
 //============================================================
-brasilis,194,221,6	duplicate(Healer)	Healer#bra	936
-dewata,195,187,4	duplicate(Healer)	Healer#dew	936
-dicastes01,201,194,4	duplicate(Healer)	Healer#dic	936
-ecl_in01,45,60,4	duplicate(Healer)	Healer#ecl	936
-malangdo,132,114,6	duplicate(Healer)	Healer#mal	936
-malaya,227,204,6	duplicate(Healer)	Healer#ma	936
-mora,55,152,4	duplicate(Healer)	Healer#mora	936
+brasilis,194,221,6	duplicate(Buffer)	Buffer#bra	936
+dewata,195,187,4	duplicate(Buffer)	Buffer#dew	936
+dicastes01,201,194,4	duplicate(Buffer)	Buffer#dic	936
+ecl_in01,45,60,4	duplicate(Buffer)	Buffer#ecl	936
+malangdo,132,114,6	duplicate(Buffer)	Buffer#mal	936
+malaya,227,204,6	duplicate(Buffer)	Buffer#ma	936
+mora,55,152,4	duplicate(Buffer)	Buffer#mora	936
