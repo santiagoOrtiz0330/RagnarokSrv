@@ -503,14 +503,14 @@ OnInit:
 	.NPCName$ = "[Job Master]";
 	
 	// Settings
-	.FourthClass = true;				// Enable fourth classes?
-	.FourthExpanded = true;				// Enable new expanded fourth classes: Ex. Hyper Novice, Rebellion, Shinkiro/Shiranui?
-	.ThirdClass = true;					// Enable third classes?
+	.FourthClass = false;				// Enable fourth classes?
+	.FourthExpanded = false;				// Enable new expanded fourth classes: Ex. Hyper Novice, Rebellion, Shinkiro/Shiranui?
+	.ThirdClass = false;					// Enable third classes?
 	.RebirthClass = true;				// Enable rebirth classes?
 	.SecondExpanded = true;				// Enable new expanded second classes: Ex. Super Novice, Kagerou/Oboro, Rebellion?
 	.BabyNovice = true;					// Enable Baby novice classes? Disable it if you like player must have parent to get job baby.
 	.BabyClass = true;					// Enable Baby classes?
-	.BabyThird = true;					// Enable Baby third classes?
+	.BabyThird = false;					// Enable Baby third classes?
 	.BabyExpanded = true;				// Enable Baby Expanded classes: Ex. Baby Ninja, Baby Taekwon, etc.
 	.BabySummoner = true;				// Enable Baby Summoner?
 	.LastJob = true;					// Enforce linear class changes?

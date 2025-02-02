@@ -40,7 +40,7 @@
 			
 		case 2:
 			if(Zeny<.PriceEndow){
-				mes "[Buffer]", 'No Tienes Suficiente Zeny xD'
+				mes "[Buffer]", 'No Tienes Suficiente Zeny'
 				end;
 			}
 			else{}
@@ -48,7 +48,7 @@
 			break;
 		case 3:
 			if(Zeny<.PriceLink){
-				mes "[Buffer]", 'No Tienes Suficiente Zeny xD'
+				mes "[Buffer]", 'No Tienes Suficiente Zeny'
 				end;
 			}
 			else{
