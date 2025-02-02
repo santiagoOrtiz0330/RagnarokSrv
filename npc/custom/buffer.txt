@@ -1,30 +1,28 @@
-//===== rAthena Script =======================================
-//= Buffer
-//===== By: ==================================================
-//= Euphy
-//===== Current Version: =====================================
-//= 1.1
-//===== Compatible With: =====================================
-//= rAthena Project
-//===== Description: =========================================
-//= Basic Buffer script.
-//===== Additional Comments: =================================
-//= 1.0 Initial script.
-//= 1.1 Aligned coordinates with @go.
-//============================================================
+// __        ____       _      __  __   _____   _   _     ____     ___         __
+// \ \      |  _ \     / \    |  \/  | | ____| | \ | |   |  _ \   / _ \       / /
+//  \ \     | |_) |   / _ \   | |\/| | |  _|   |  \| |   | |_) | | | | |     / / 
+//   \ \    |  _ <   / ___ \  | |  | | | |___  | |\  |   |  _ <  | |_| |    / /  
+//    \_\   |_| \_\ /_/   \_\ |_|  |_| |_____| |_| \_|   |_| \_\  \___/    /_/   
 
 -	script	Buffer	-1,{
 
 	.@PriceHeal = 100;	// Zeny required for heal
-	.@PriceEndow = 150;
-	.@priceLink = 200;
+	.@PriceEndow = 20000;
+	.@PriceLink = 200;
 	.@Delay = 0;	// Heal delay, in seconds
+	.@Ticks = 1800000;		// Time in ticks for duration of Endow.
+
+	setarray .Element$[1],"^0055FFWater^000000","^FF0000Fire^000000","^552500Earth^000000","^E4D300Wind^000000","^D8D1B5Holy^000000","^250066Shadown^000000","^706A6AGhost^000000";
+	setarray .EndowSC[1],SC_WATERWEAPON,SC_FIREWEAPON,SC_EARTHWEAPON,SC_WINDWEAPON,SC_ASPERSIO,SC_SHADOWWEAPON,SC_GHOSTWEAPON;
+
 
 	select("Heal:Weapon Enchanment:Soul Link");
 	switch ( @menu ) {
 		case 1:
-			if(Zeny<.PriceHeal){
-				mes "[Buffer]", "No Tienes Suficiente Zeny.";
+			if(Zeny<.@PriceHeal){
+				mes "[Buffer]", "You don't have enough Zeny.",
+				"You just have" + Zeny;
+				close;
 				end;
 			}
 			else{
@@ -34,23 +32,59 @@
 				sc_start SC_INCREASEAGI,600000,10;
 				specialeffect2 EF_BLESSING;
 				sc_start SC_BLESSING,600000,10;
-				Zeny = Zeny - .PriceHeal;
+				Zeny = Zeny - .@PriceHeal;
 			}	
 			break;	
 			
 		case 2:
-			if(Zeny<.PriceEndow)
+			if(Zeny<.@PriceEndow)
 			{
-				mes "[Buffer]", "No Tienes Suficiente Zeny.";
+				mes "[Buffer]", "You don't have enough Zeny.",
+				"You just have" + Zeny;
+				close;
 				end;
 			}
 			else{
-				Zeny = Zeny - .PriceEndow;
+				mes "[Buffer]","Greetings! How would you like to be endowed?";
+				if(@End_Ele) .@Last_Ele$ = "Last Element - "+.Element$[@End_Ele]+":"; else .@Last_Ele$ = ":";
+				select(.@Last_Ele$+.Element$[1]+":"+.Element$[2]+":"+.Element$[3]+":"+.Element$[4]+":"+.Element$[5]+":"+.Element$[6]+":"+.Element$[7]);
+				if(@menu != 1) .@Choice = @menu-1; else .@Choice = @End_Ele;
+
+				clear;
+				mes "[Buffer]","So you would like a " + .Element$[.@Choice] + " endowment? You will require " + .@PriceEndow+ " zeny, Do you accept?";
+				if(select("Yes:No") == 1) {
+					if( .ReqType ) {
+						if(countitem(.StoneReq[.@Choice]) == 0 || Zeny < .Price) {
+							clear;
+							mes "[Buffer]","You do not have the required money or items. Please come back when you do.";
+							close;
+						}
+					}
+					else if( Zeny < .@PriceEndow) {
+						clear;
+						mes "[Buffer]","You do not have the required money or items. Please come back when you do.";
+						close;
+					}
+					clear;
+					mes "[Buffer]","Thank you for your custom. Here we go!";
+					close2;
+					@End_Ele = .@Choice;
+					sc_start .EndowSC[@End_Ele],.@Ticks,0;
+					Zeny = Zeny - .@PriceEndow;
+					end;
+				}
+				else {
+					clear;
+					mes "[Buffer]","Too bad! Let me endow you next time.";
+					close;
+				}
 			}
 			break;
 		case 3:
-			if(Zeny<.PriceLink){
-				mes "[Buffer]", "No Tienes Suficiente Zeny.";
+			if(Zeny<.@PriceLink){
+				mes "[Buffer]", "You don't have enough Zeny.",
+				"You just have" + Zeny;
+				close;
 				end;
 			}
 			else
@@ -82,7 +116,7 @@
 					sc_start4 sc_spirit, 360000, 5, .@spirit,0,0;
 					skilleffect .@spirit, 5;
 				}
-				Zeny = Zeny - .PriceLink;
+				Zeny = Zeny - .@PriceLink;
 			}
 			
 	} 

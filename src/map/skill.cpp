@@ -1,6 +1,5 @@
 // Copyright (c) rAthena Dev Teams - Licensed under GNU GPL
 // For more information, see LICENCE in the main folder
-
 #include "skill.hpp"
 
 #include <array>
@@ -5127,6 +5126,17 @@ int32 skill_castend_damage_id (struct block_list* src, struct block_list *bl, ui
 	map_session_data *sd = nullptr;
 	status_change *sc, *tsc;
 
+
+	int damage = 100;
+    ShowWarning("Insertar Skill");
+    // Llamamos a la función para guardar en la BD
+    if (src && src->type == BL_PC) { // Verifica que el atacante sea un personaje
+	    ShowWarning("Ingrese Insertar Skill");
+        map_session_data *sd = BL_CAST(BL_PC, src);
+        log_skill_use(sd->status.char_id, skill_id, skill_lv, damage, bl->id);
+    }
+
+
 	if (skill_id > 0 && !skill_lv) return 0;
 
 	nullpo_retr(1, src);
@@ -7335,6 +7345,21 @@ int32 skill_castend_damage_id (struct block_list* src, struct block_list *bl, ui
 	}
 
 	return 0;
+}
+
+
+void log_skill_use(int char_id, int skill_id, int skill_lv, int damage, int target_id) {
+    char query[256];
+	// Sql* sql_handle = db->accounts;
+	// SqlStmt stmt{ *sql_handle };
+	mmysql_handle = Sql_Malloc();
+    snprintf(query, sizeof(query),
+        "INSERT INTO skill_logs (char_id, skill_id, skill_lv, damage, target_id) VALUES (%d, %d, %d, %d, %d)",
+        char_id, skill_id, skill_lv, damage, target_id);
+    
+    if (SQL_ERROR == Sql_QueryStr(mmysql_handle, query)) {
+        Sql_ShowDebug(mmysql_handle);
+    }
 }
 
 /**

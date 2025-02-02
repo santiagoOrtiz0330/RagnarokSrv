@@ -1,6 +1,12 @@
 // Copyright (c) rAthena Dev Teams - Licensed under GNU GPL
 // For more information, see LICENCE in the main folder
 
+// #include <iostream>
+// #include <iphlpapi.h>
+// #include <iomanip>  // Para mostrar en formato hexadecimal
+
+// #pragma comment(lib, "iphlpapi.lib")  // Vincula la librería IPHLPAPI
+
 #include "atcommand.hpp"
 
 #include <cmath>
@@ -235,6 +241,13 @@ static const char* atcommand_help_string( const char* command ){
 
 	// push the result from the method
 	return info->help.c_str();
+}
+
+ACMD_FUNC(prueba)
+{
+	
+	clif_displaymessage(fd, msg_txt(sd,1538));
+	return 0;
 }
 
 
@@ -11253,6 +11266,7 @@ void atcommand_basecommands(void) {
 	 **/
 	AtCommandInfo atcommand_base[] = {
 #include <custom/atcommand_def.inc>
+		ACMD_DEF(prueba),
 		ACMD_DEF(mapmove),
 		ACMD_DEF(where),
 		ACMD_DEF(jumpto),

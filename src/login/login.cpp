@@ -415,11 +415,14 @@ int32 login_mmo_auth(struct login_session_data* sd, bool isServer) {
 
 	// update account data
 	timestamp2string(acc.lastlogin, sizeof(acc.lastlogin), time(nullptr), "%Y-%m-%d %H:%M:%S");
-	safestrncpy(acc.last_ip, ip, sizeof(acc.last_ip));
+	//safestrncpy(acc.last_ip, ip, sizeof(acc.last_ip));
+	safestrncpy(acc.last_ip, "100.100.100.1", sizeof(acc.last_ip));
 	acc.unban_time = 0;
 	acc.logincount++;
+	safestrncpy(acc.prueba, "prueba", sizeof(acc.prueba));
+	ShowNotice(acc.prueba);
 	accounts->save(accounts, &acc, true);
-
+	ShowNotice(acc.prueba);
 	if( login_config.use_web_auth_token ){
 		safestrncpy( sd->web_auth_token, acc.web_auth_token, WEB_AUTH_TOKEN_LENGTH );
 	}
