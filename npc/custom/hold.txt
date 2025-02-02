@@ -1,0 +1,27 @@
+// __        ____       _      __  __   _____   _   _     ____     ___         __
+// \ \      |  _ \     / \    |  \/  | | ____| | \ | |   |  _ \   / _ \       / /
+//  \ \     | |_) |   / _ \   | |\/| | |  _|   |  \| |   | |_) | | | | |     / / 
+//   \ \    |  _ <   / ___ \  | |  | | | |___  | |\  |   |  _ <  | |_| |    / /  
+//    \_\   |_| \_\ /_/   \_\ |_|  |_| |_____| |_| \_|   |_| \_\  \___/    /_/   
+
+
+
+
+-	script	hold	-1,{
+
+	OnInit:
+		bindatcmd("hold", strnpcinfo(3)+"::OnHold");
+		end;
+
+	OnHold:
+		if ( !@Hold ) {
+			set @Hold, 1;
+			message strcharinfo(0), "Hold mode is ON.";
+			pcblockmove getcharid(3), 1;
+		} else {
+			set @Hold, 0;
+			message strcharinfo(0), "Hold mode is OFF.";
+			pcblockmove getcharid(3), 0;
+		}
+
+}
