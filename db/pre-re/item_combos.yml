@@ -230,6 +230,15 @@ Body:
       - Combo:
           - Orc_Archer_Bow
           - Steel_Arrow
+      - Combo:
+          - Hunter_Bow
+          - Hunting_Arrow
+      - Combo:
+          - Hunter_Bow_
+          - Hunting_Arrow
+      - Combo:
+          - Elven_Bow
+          - Arrow_Of_Elf
     Script: |
       bonus bLongAtkRate,50;
   - Combos:

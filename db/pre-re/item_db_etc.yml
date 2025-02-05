@@ -2538,6 +2538,44 @@ Body:
     Script: |
       bonus bAtkEle,Ele_Holy;
       bonus2 bAddRace,RC_Demon,5;
+  - Id: 1773
+    AegisName: Arrow_Of_Elf
+    Name: Elven Arrow
+    Type: Ammo
+    SubType: Arrow
+    Buy: 10
+    Sell: 0
+    Weight: 1
+    Attack: 45
+    Jobs:
+      Archer: true
+      Assassin: true
+      BardDancer: true
+      Hunter: true
+      Rogue: true
+      Thief: true
+    Locations:
+      Ammo: true
+    EquipLevelMin: 1
+  - Id: 1774
+    AegisName: Hunting_Arrow
+    Name: Hunting Arrow
+    Type: Ammo
+    SubType: Arrow
+    Buy: 10
+    Sell: 0
+    Weight: 1
+    Attack: 35
+    Jobs:
+      Archer: true
+      Assassin: true
+      BardDancer: true
+      Hunter: true
+      Rogue: true
+      Thief: true
+    Locations:
+      Ammo: true
+    EquipLevelMin: 1
   - Id: 4001
     AegisName: Poring_Card
     Name: Poring Card

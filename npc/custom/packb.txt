@@ -1,0 +1,37 @@
+prontera,146,169,8	script	Pack De Bienvenida	628,{
+    mes "Hola.",
+        "Te gustaria recibir",
+        "Tu pack de bienvenida?.",
+        "Tiene un costo de:",
+        "50000 de Zeny",
+        "10 Yggdrasil Berrys.";
+    next;
+    if(select("Si:No") == 2){
+        mes "Entonces,",
+            "Hasta luego.",
+            "Estare atento a tu llegada.";
+        close;
+    }
+    
+        mes "Decides adquirirlo?";
+    if(select("Si:No") ==2){
+        mes "Hasta luego.";
+    }
+
+    if(Zeny >= 50000 && countitem(607) >= 10){
+        set Zeny,Zeny-50000;
+        delitem 607, 10;
+        atcommand "@item 4001";
+        mes "Gracias.",
+            "Aqui tienes tu pack.";
+        close;
+    } else {
+        mes "No cumples con lo pedido.",
+            "Vuelve cuando tengas lo requerido.",
+            "Adios.";
+        close;
+    }
+    
+}
+//Asi funciona los NPC de quest. Tambien, como se requieren y eliminan los objetos del inventario que son pedidos por el NPC.
+//Se usa de ej: 10 Ygg berrys(607) y 50000 de zeny. y se entrega una poring card(4001)

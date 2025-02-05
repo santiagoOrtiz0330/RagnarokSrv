@@ -12191,6 +12191,26 @@ Body:
       bonus2 bSkillAtk,"SN_SHARPSHOOTING",10;
       bonus2 bSkillAtk,"AC_DOUBLE",10;
       bonus2 bSkillAtk,"AC_CHARGEARROW",10;
+  - Id: 1746
+    AegisName: Elven_Bow
+    Name: Elven Bow
+    Type: Weapon
+    SubType: Bow
+    Buy: 20
+    Weight: 1500
+    Attack: 160
+    Range: 5
+    Slots: 1
+    Jobs:
+      BardDancer: true
+      Hunter: true
+    Locations:
+      Both_Hand: true
+    WeaponLevel: 3
+    EquipLevelMin: 85
+    Refineable: true
+    Script: |
+      bonus bDex,2;
   - Id: 1801
     AegisName: Waghnakh
     Name: Waghnak
