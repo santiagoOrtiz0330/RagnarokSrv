@@ -41089,9 +41089,52 @@ Body:
     ArmorLevel: 1
     EquipLevelMin: 1
     View: 654
-  - Id: 1000225
+  - Id: 31500
     AegisName: Deviling_wings
     Name: Deviling Wings
+    Type: Armor
+    Buy: 20
+    Weight: 100
+    Defense: 1
+    Locations:
+      Head_Low: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 1882
+    Script: |
+      bonus bStr,3;
+  - Id: 31501
+    AegisName: Angeling_wings
+    Name: Angeling Wings
+    Type: Armor
+    Buy: 20
+    Weight: 100
+    Defense: 1
+    Locations:
+      Head_Low: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 1883
+    Script: |
+      bonus bInt,3;
+  - Id: 31502
+    AegisName: Little_wings
+    Name: Little Evil Wings
+    Type: Armor
+    Buy: 20
+    Weight: 100
+    Defense: 1
+    Locations:
+      Head_Low: true
+    ArmorLevel: 1
+    EquipLevelMin: 1
+    View: 1884
+    Script: |
+      bonus bLuk,2;
+      bonus bAgi,2;
+  - Id: 1000225
+    AegisName: Deviling_wings2
+    Name: Deviling Wings2
     Type: Armor
     Buy: 20
     Weight: 100
@@ -41101,8 +41144,8 @@ Body:
     EquipLevelMin: 10
     View: 1882
   - Id: 1000226
-    AegisName: Angeling_wings
-    Name: Angeling Wings
+    AegisName: Angeling_wings2
+    Name: Angeling Wings2
     Type: Armor
     Buy: 20
     Weight: 100
