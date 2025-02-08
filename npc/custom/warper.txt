@@ -145,34 +145,33 @@ menu	"Prontera",T1, "Alberta",T2, "Aldebaran",T3, "Amatsu",T4, "Ayothaya",T5,
 		"Varmundt's Mansion",T41, "Veins",T42, "Verus Findspot",T43, "Wolf Village",T44;
 
 T1: Go("prontera",156,163);
-T2: Go("alberta",28,234);
-T3: Go("aldebaran",140,131);
-T4: Go("amatsu",198,84);
-T5: Go("ayothaya",208,166);
-T6: Restrict("Brasilis");
-	Go("brasilis",196,217);
-T7: Go("comodo",209,143);
+T2: Go("alberta",27,235);
+T3: Go("aldebaran",140,114);
+T4: Go("amatsu",113,138);
+T5: Go("ayothaya",218,174);
+T6: Go("brasilis",196,215);
+T7: Go("comodo",189,149);
 T8: Restrict("RE");
 	Go("dewata",200,180);
 T9: Restrict("RE");
 	Go("ecl_in01",48,53);
-T10: Go("einbech",63,35);
-T11: Go("einbroch",64,200);
+T10: Go("einbech",172,124);
+T11: Go("einbroch",231,198);
 T12: Restrict("RE");
 	 Go("dicastes01",198,187);
-T13: Go("geffen",119,59);
-T14: Go("hugel",96,145);
+T13: Go("geffen",120,59);
+T14: Go("hugel",95,145);
 T15: Restrict("RE");
 	 Go("icecastle",185,212);
-T16: Go("izlude",128,(checkre(3)?146:114));
+T16: Go("izlude",127,144(checkre(3)?146:114));
 T17: Go("jawaii",251,132);
-T18: Go("yuno",157,51);
-T19: Go("gonryun",180,113);
+T18: Go("yuno",157,180);
+T19: Go("gonryun",159,116);
 T20: Restrict("RE");
 	 Go("lasagna",193,182);
-T21: Go("lighthalzen",158,92);
+T21: Go("lighthalzen",159,92);
 T22: Go("louyang",217,100);
-T23: Go("xmas",147,134);
+T23: Go("xmas",148,130);
 T24: Restrict("RE");
 	 Go("malangdo",140,114);
 T25: Restrict("RE");
@@ -186,18 +185,18 @@ T30: Go("moscovia",223,184);
 T31: Go("nameless_i",256,215);
 T32: Go("nameless_n",256,215);
 T33: Go("niflheim",202,174);
-T34: Go("payon",179,100);
+T34: Go("payon",172,104);
 T35: Go("rachel",130,110);
 T36: Restrict("RE");
 	 Go("harboro1",298,206);
 T37: Restrict("RE");
 	 Go("sp_cor",160,166);
-T38: Go("splendide",201,147);
+T38: Go("splendide",203,147);
 T39: Go("thor_camp",246,68);
 T40: Go("umbala",97,153);
 T41: Restrict("RE");
 	Go("ba_maison",72,146);
-T42: Go("veins",216,123);
+T42: Go("veins",216,128);
 T43: Restrict("RE");
 	 Go("verus04",123,250);
 T44: Restrict("RE");
@@ -1235,7 +1234,7 @@ gef_fild10,71,339,4	duplicate(Warper)	Warper#orc	902
 geffen,124,69,4	duplicate(Warper)	Warper#gef	902
 glast_01,372,308,4	duplicate(Warper)	Warper#glh	902
 gonryun,162,122,4	duplicate(Warper)	Warper#gon	902
-hugel,101,151,4	duplicate(Warper)	Warper#hug	902
+hugel,101,150,4	duplicate(Warper)	Warper#hug	902
 izlu2dun,110,92,4	duplicate(Warper)	Warper#izd	902
 izlude,134,150,4	duplicate(Warper)	Warper#izl	902	//Pre-RE: (132,120)
 jawaii,253,138,4	duplicate(Warper)	Warper#jaw	902

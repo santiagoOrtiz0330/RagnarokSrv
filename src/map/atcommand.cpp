@@ -2089,7 +2089,7 @@ ACMD_FUNC(go)
 		int32 x, y;
 	} data[] = {
 		{ MAP_PRONTERA,    156, 163 }, //  0=Prontera
-		{ MAP_MORROC,      161,  90 }, //  1=Morroc
+		{ MAP_MORROC,      156,  93 }, //  1=Morroc
 		{ MAP_GEFFEN,      120,  59 }, //  2=Geffen
 		{ MAP_PAYON,       172, 104 }, //  3=Payon
 		{ MAP_ALBERTA,     28, 235 }, //  4=Alberta
@@ -2101,10 +2101,10 @@ ACMD_FUNC(go)
 		{ MAP_ALDEBARAN,   140, 114 }, //  6=Al de Baran
 		{ MAP_LUTIE,       148, 130 }, //  7=Lutie
 		{ MAP_COMODO,      189, 149 }, //  8=Comodo
-		{ MAP_YUNO,        158, 180 }, //  9=Yuno
+		{ MAP_YUNO,        157, 180 }, //  9=Yuno
 		{ MAP_AMATSU,      115, 144 }, // 10=Amatsu
 		{ MAP_GONRYUN,     169, 112 }, // 11=Gonryun
-		{ MAP_UMBALA,       92, 154 }, // 12=Umbala
+		{ MAP_UMBALA,       97, 153 }, // 12=Umbala
 		{ MAP_NIFLHEIM,     194, 186 }, // 13=Niflheim
 		{ MAP_LOUYANG,     217, 100 }, // 14=Louyang
 #ifdef RENEWAL
@@ -2113,19 +2113,19 @@ ACMD_FUNC(go)
 		{ MAP_NOVICE,       53, 111 }, // 15=Training Grounds
 #endif
 		{ MAP_JAIL,         23,  61 }, // 16=Prison
-		{ MAP_JAWAII,      241, 142 }, // 17=Jawaii
+		{ MAP_JAWAII,      251, 132 }, // 17=Jawaii
 		{ MAP_AYOTHAYA,    218, 174 }, // 18=Ayothaya
-		{ MAP_EINBROCH,     234, 197 }, // 19=Einbroch
-		{ MAP_LIGHTHALZEN, 158,  92 }, // 20=Lighthalzen
-		{ MAP_EINBECH,      172, 129 }, // 21=Einbech
-		{ MAP_HUGEL,        96, 145 }, // 22=Hugel
+		{ MAP_EINBROCH,     231, 198 }, // 19=Einbroch
+		{ MAP_LIGHTHALZEN, 159,  92 }, // 20=Lighthalzen
+		{ MAP_EINBECH,      172, 124 }, // 21=Einbech
+		{ MAP_HUGEL,        95, 145 }, // 22=Hugel
 		{ MAP_RACHEL,      130, 110 }, // 23=Rachel
-		{ MAP_VEINS,       217, 128 }, // 24=Veins
+		{ MAP_VEINS,       216, 128 }, // 24=Veins
 		{ MAP_MOSCOVIA,    223, 184 }, // 25=Moscovia
 		{ MAP_MIDCAMP,     180, 240 }, // 26=Midgard Camp
 		{ MAP_MANUK,       282, 138 }, // 27=Manuk
-		{ MAP_SPLENDIDE,   201, 147 }, // 28=Splendide
-		{ MAP_BRASILIS,    196, 212 }, // 29=Brasilis
+		{ MAP_SPLENDIDE,   203, 147 }, // 28=Splendide
+		{ MAP_BRASILIS,    196, 215 }, // 29=Brasilis
 		{ MAP_DICASTES,    198, 187 }, // 30=El Dicastes
 		{ MAP_MORA,         52, 143 }, // 31=Mora
 		{ MAP_DEWATA,      200, 180 }, // 32=Dewata
