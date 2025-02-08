@@ -129,11 +129,11 @@
 //============================================================
 alberta,25,240,6	duplicate(Buffer)	Buffer#alb	936
 aldebaran,135,118,6	duplicate(Buffer)	Buffer#alde	936
-amatsu,200,79,4	duplicate(Buffer)	Buffer#ama	936
-ayothaya,207,169,6	duplicate(Buffer)	Buffer#ayo	936
+amatsu,105,144,6	duplicate(Buffer)	Buffer#ama	936
+ayothaya,223,178,6	duplicate(Buffer)	Buffer#ayo	936
 comodo,184,158,6	duplicate(Buffer)	Buffer#com	936
-einbech,57,36,6	duplicate(Buffer)	Buffer#einbe	936
-einbroch,57,202,6	duplicate(Buffer)	Buffer#einbr	936
+einbech,175,131,4	duplicate(Buffer)	Buffer#einbe	936
+einbroch,228,206,6	duplicate(Buffer)	Buffer#einbr	936
 geffen,115,69,6	duplicate(Buffer)	Buffer#gef	936
 gonryun,156,122,6	duplicate(Buffer)	Buffer#gon	936
 hugel,89,150,6	duplicate(Buffer)	Buffer#hug	936
@@ -153,16 +153,16 @@ rachel,125,116,6	duplicate(Buffer)	Buffer#rac	936
 splendide,201,153,4	duplicate(Buffer)	Buffer#spl	936
 thor_camp,249,74,4	duplicate(Buffer)	Buffer#thor	936
 umbala,105,148,3	duplicate(Buffer)	Buffer#umb	936
-veins,217,121,4	duplicate(Buffer)	Buffer#ve	936
-xmas,143,136,4	duplicate(Buffer)	Buffer#xmas	936
-yuno,164,45,4	duplicate(Buffer)	Buffer#yuno	936
+veins,223,132,4	duplicate(Buffer)	Buffer#ve	936
+xmas,143,136,6	duplicate(Buffer)	Buffer#xmas	936
+yuno,165,187,4	duplicate(Buffer)	Buffer#yuno	936
 
 // Duplicates (Renewal)
 //============================================================
 brasilis,194,221,6	duplicate(Buffer)	Buffer#bra	936
-dewata,195,187,4	duplicate(Buffer)	Buffer#dew	936
+dewata,195,186,6	duplicate(Buffer)	Buffer#dew	936
 dicastes01,201,194,4	duplicate(Buffer)	Buffer#dic	936
 ecl_in01,45,60,4	duplicate(Buffer)	Buffer#ecl	936
 malangdo,132,114,6	duplicate(Buffer)	Buffer#mal	936
 malaya,227,204,6	duplicate(Buffer)	Buffer#ma	936
-mora,55,152,4	duplicate(Buffer)	Buffer#mora	936
+mora,49,149,6	duplicate(Buffer)	Buffer#mora	936

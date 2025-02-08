@@ -16806,6 +16806,12 @@ Body:
       Armor: true
     ArmorLevel: 1
     Refineable: true
+    Script: |
+      hateffect HAT_EF_SLOTH_AURA_A,true;
+      hateffect HAT_EF_SLOTH_AURA_B,true;
+    UnEquipScript: |
+      hateffect HAT_EF_SLOTH_AURA_A,false;
+      hateffect HAT_EF_SLOTH_AURA_B,false;
   - Id: 2302
     AegisName: Cotton_Shirt_
     Name: Cotton Shirt
@@ -16818,6 +16824,12 @@ Body:
       Armor: true
     ArmorLevel: 1
     Refineable: true
+    Script: |
+      hateffect HAT_EF_arcane_aura_A,true;
+      hateffect HAT_EF_arcane_aura_B,true;
+    UnEquipScript: |
+      hateffect HAT_EF_arcane_aura_A,false;
+      hateffect HAT_EF_arcane_aura_B,false;
   - Id: 2303
     AegisName: Leather_Jacket
     Name: Jacket
