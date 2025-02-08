@@ -8607,6 +8607,8 @@ Body:
     Weight: 250
     Flags:
       BuyingStore: true
+    Script: |
+      getitem 1773,500;
   - Id: 12576
     AegisName: Hunting_Arrow_Cntr
     Name: Hunting Arrow Cntr
@@ -8615,6 +8617,8 @@ Body:
     Weight: 250
     Flags:
       BuyingStore: true
+    Script: |
+      getitem 1774,500;
   - Id: 12577
     AegisName: Lucky_Egg_C6
     Name: Lucky Egg C6

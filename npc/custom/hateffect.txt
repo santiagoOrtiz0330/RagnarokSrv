@@ -1,0 +1,18 @@
+-	script	HATEFFECT	-1,{
+
+OnHatEffect:
+	if(getgmlevel()>= 80){
+	input .@number;
+	if (.@number < 1) end;
+	if (.@number >= 301) end;
+	for(.@i = 1; .@i < 300; ++.@i)
+		hateffect .@i,false;
+	hateffect .@number,true;
+	end;
+	}
+
+	
+OnInit:
+	bindatcmd "efc",strnpcinfo(3)+"::OnHatEffect";
+	end;
+}

@@ -137,14 +137,14 @@ function Restrict {
 menu	"Prontera",T1, "Alberta",T2, "Aldebaran",T3, "Amatsu",T4, "Ayothaya",T5,
     	"Brasilis",T6, "Comodo",T7, "Dewata",T8, "Eclage",T9, "Einbech",T10,
 		"Einbroch",T11, "El Dicastes",T12, "Geffen",T13, "Hugel",T14, "Ice Castle",T15,
-		"Izlude",T16, "Jawaii",T17, "Juno",T18, "Kunlun",T19, "Lasagna",T20,
+		"Izlude",T16, "Jawaii",T17, "Juno",T18, "Gonryun",T19, "Lasagna",T20,
 		"Lighthalzen",T21, "Luoyang",T22, "Lutie",T23, "Malangdo",T24, "Malaya",T25,
 		"Manuk",T26, "Midgarts Expedition Camp",T27, "Mora",T28, "Morocc",T29, "Moscovia",T30,
 		"Nameless Island (Day)",T31, "Nameless Island (Night)",T32, "Niflheim",T33, "Payon",T34, "Rachel",T35,
 		"Rockridge",T36, "Special Security Area, Cor",T37, "Splendide",T38, "Thor Camp",T39, "Umbala",T40,
 		"Varmundt's Mansion",T41, "Veins",T42, "Verus Findspot",T43, "Wolf Village",T44;
 
-T1: Go("prontera",155,183);
+T1: Go("prontera",156,163);
 T2: Go("alberta",28,234);
 T3: Go("aldebaran",140,131);
 T4: Go("amatsu",198,84);
@@ -167,7 +167,7 @@ T15: Restrict("RE");
 T16: Go("izlude",128,(checkre(3)?146:114));
 T17: Go("jawaii",251,132);
 T18: Go("yuno",157,51);
-T19: Go("gonryun",160,120);
+T19: Go("gonryun",180,113);
 T20: Restrict("RE");
 	 Go("lasagna",193,182);
 T21: Go("lighthalzen",158,92);
@@ -1225,49 +1225,50 @@ OnInit:
 alb2trea,57,70,6	duplicate(Warper)	Warper#tre	902
 alberta,28,240,4	duplicate(Warper)	Warper#alb	902
 aldebaran,145,118,4	duplicate(Warper)	Warper#alde	902
-amatsu,203,87,4	duplicate(Warper)	Warper#ama	902
-ayothaya,209,169,6	duplicate(Warper)	Warper#ayo	902
+amatsu,121,144,4	duplicate(Warper)	Warper#ama	902
+//brasilis,199,221,4	duplicate(Warper)	Warper#bra	902
+ayothaya,212,178,6	duplicate(Warper)	Warper#ayo	902
 comodo,194,158,4	duplicate(Warper)	Warper#com	902
-einbech,59,38,6	duplicate(Warper)	Warper#einbe	902
-einbroch,69,202,4	duplicate(Warper)	Warper#einbr	902
+einbech,169,131,6	duplicate(Warper)	Warper#einbe	902
+einbroch,235,206,4	duplicate(Warper)	Warper#einbr	902
 gef_fild10,71,339,4	duplicate(Warper)	Warper#orc	902
-geffen,124,72,4	duplicate(Warper)	Warper#gef	902
+geffen,124,69,4	duplicate(Warper)	Warper#gef	902
 glast_01,372,308,4	duplicate(Warper)	Warper#glh	902
 gonryun,162,122,4	duplicate(Warper)	Warper#gon	902
 hugel,101,151,4	duplicate(Warper)	Warper#hug	902
 izlu2dun,110,92,4	duplicate(Warper)	Warper#izd	902
 izlude,134,150,4	duplicate(Warper)	Warper#izl	902	//Pre-RE: (132,120)
 jawaii,253,138,4	duplicate(Warper)	Warper#jaw	902
-lighthalzen,162,102,4	duplicate(Warper)	Warper#lhz	902
+lighthalzen,162,100,4	duplicate(Warper)	Warper#lhz	902
 louyang,208,103,6	duplicate(Warper)	Warper#lou	902
 manuk,274,146,6	duplicate(Warper)	Warper#man	902
 mid_camp,216,288,4	duplicate(Warper)	Warper#mid	902
 mjolnir_02,85,364,4	duplicate(Warper)	Warper#mjo	902
 moc_ruins,64,164,4	duplicate(Warper)	Warper#moc	902
 morocc,159,97,4	duplicate(Warper)	Warper#mor	902
-moscovia,229,191,4	duplicate(Warper)	Warper#mos	902
+moscovia,226,191,4	duplicate(Warper)	Warper#mos	902
 nameless_n,259,213,4	duplicate(Warper)	Warper#nam	902
 niflheim,205,179,4	duplicate(Warper)	Warper#nif	902
 pay_arche,42,134,4	duplicate(Warper)	Warper#arc	902
-payon,182,108,4	duplicate(Warper)	Warper#pay	902
+payon,166,106,6	duplicate(Warper)	Warper#pay	902
 prontera,159,192,4	duplicate(Warper)	Warper#prt	902
 prt_fild05,279,223,6	duplicate(Warper)	Warper#cul	902
-rachel,135,116,4	duplicate(Warper)	Warper#rac	902
+rachel,134,116,4	duplicate(Warper)	Warper#rac	902
 splendide,205,153,4	duplicate(Warper)	Warper#spl	902
 thor_camp,249,76,4	duplicate(Warper)	Warper#thor	902
 umbala,106,150,3	duplicate(Warper)	Warper#umb	902
-veins,214,123,4	duplicate(Warper)	Warper#ve	902
-xmas,150,136,6	duplicate(Warper)	Warper#xmas	902
-yuno,162,47,4	duplicate(Warper)	Warper#yuno	902
+veins,208,132,6	duplicate(Warper)	Warper#ve	902
+xmas,153,136,4	duplicate(Warper)	Warper#xmas	902
+yuno,150,187,6	duplicate(Warper)	Warper#yuno	902
 
 // --------------------------------------------------
 //	Duplicates (Renewal):
 // --------------------------------------------------
-brasilis,201,222,4	duplicate(Warper)	Warper#bra	902
-dewata,204,186,6	duplicate(Warper)	Warper#dew	902
+brasilis,199,221,4	duplicate(Warper)	Warper#bra	902
+dewata,204,186,4	duplicate(Warper)	Warper#dew	902
 dicastes01,194,194,6	duplicate(Warper)	Warper#dic	902
 ecl_in01,51,60,4	duplicate(Warper)	Warper#ecl	902
 lasagna,196,187,4	duplicate(Warper)	Warper#las	902
 malangdo,134,117,6	duplicate(Warper)	Warper#mal	902
 malaya,231,204,4	duplicate(Warper)	Warper#ma	902
-mora,57,152,4	duplicate(Warper)	Warper#mora	902
+mora,54,149,4	duplicate(Warper)	Warper#mora	902

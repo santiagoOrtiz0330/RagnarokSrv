@@ -1,0 +1,39 @@
+prontera,164,172,4	script	Quest Items	421,{
+    mes "Hola.",
+        "Quen te gustaria hacer?";
+    next;
+
+    switch(select("Demon Evil Wing:Item 2:Item 3:Item 4")){
+
+        case 1:
+        mes "Para crear",
+            "Demon Evil Wing",
+            "Necesitas:",
+            "1 Evil Wing",
+            "20000000 Zeny",
+            "Quieres crearla?";
+
+    if(select("Si:No") == 2){
+    next;
+
+        mes "Okay.",
+            "Vuelve cuando quieras.";
+    close;
+    break;
+    }
+    next;
+
+    if(Zeny >= 20000000 && countitem(2255) >= 1){    
+        set Zeny,Zeny-20000000;
+        delitem 2255,1;
+        getitem 1000225,1;
+        mes "Aqui esta tu item.",
+            "Disfruta";
+    } else {
+        mes "No tienes los materiale necesarios",
+            "Vuelve cuando los tengas";
+    }
+    close;
+    break;
+    }
+}

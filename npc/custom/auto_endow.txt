@@ -32,7 +32,6 @@ izlude,131,142,6	script	Well Endowed Sage	742,{
 		@End_Ele = .@Choice;
 		sc_start .EndowSC[@End_Ele],.Ticks,0;
 		Zeny = Zeny - .Price;
-		if (.ReqType) delitem .StoneReq[.@Choice],1;
 		end;
 	}
 	else {

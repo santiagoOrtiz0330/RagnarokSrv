@@ -306,7 +306,7 @@ amatsu,206,150,3	shop	Chef Assistant#ama	83,7453:-1,579:-1
 louyang,256,123,5	shop	Chef Assistant#lou	820,7454:-1,577:-1
 gonryun,147,101,5	shop	Chef Assistant#gon	83,7452:-1,580:-1
 ayothaya,203,178,3	shop	Chef Assistant#ayo	83,7455:-1,577:-1
-xmas,152,137,5	shop	Chef Assistant#xmas	83,7457:-1,577:-1
+xmas,150,136,5	shop	Chef Assistant#xmas	83,7457:-1,577:-1
 niflheim,209,180,5	shop	Chef Assistant#nif	83,581:-1
 
 //===== Additional Comments(old): ================================= 

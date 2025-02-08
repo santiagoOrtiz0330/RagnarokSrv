@@ -1,0 +1,66 @@
+
+
+
+prontera,146,172,8	script	Plagiarisim	637,{
+set .@skill_level,getskilllv( "RG_PLAGIARISM" );
+
+mes "I provide skill to Stalker Class.";
+
+if( !.@skill_level ){
+	mes "But only who have ^FF0000Plagiarism skill^000000 can use this services.";
+}else{
+	if( select( ( CLONE_SKILL && CLONE_SKILL_LV )?"Un-Learn Skill":"Learn Skill","Close" ) == 1 ){
+		if( CLONE_SKILL && CLONE_SKILL_LV ){
+			mes "Unlearned Copied Skill";
+			set CLONE_SKILL_LV,0;
+			skill CLONE_SKILL,CLONE_SKILL_LV,0;
+			set CLONE_SKILL,0;
+		}else{
+			mes "Please select a Skills";
+			next;
+			set .@i,select( .menu$ ) - 1;
+			if( .@skill_level > .skill_max_level[.@i] )
+				set .@skill_level,.skill_max_level[.@i];
+			mes "Skill : ^0055FF"+.skill_name$[.@i]+"^000000";
+			mes "Level : ^0055FF"+.@skill_level+"^000000";
+			mes "Cost : ^0055FF"+( ( .skill_cost[.@i] )? .skill_cost[.@i]+" Zeny":"Free" )+"^000000";
+			mes " ";
+			mes "^777777( Plagiarism Affect Skill Level )^000000";
+			if( select( "Confirm","Cancel" ) == 1 ){
+				if( .skill_cost[.@i] ){
+					if( Zeny >= .skill_cost[.@i] ){
+						set Zeny,Zeny - .skill_cost[.@i];
+					}else{
+						mes "Not enough Zeny.";
+						close;
+					}
+				}
+				set CLONE_SKILL,.skill_id[.@i];
+				set CLONE_SKILL_LV,.@skill_level;
+				mes "Learned Skill ^0055FFLv"+CLONE_SKILL_LV+" "+.skill_name$[.@i]+"^000000";
+				skill CLONE_SKILL,CLONE_SKILL_LV,0;
+			}
+		}
+	}
+}
+//dispbottom "Skill ID "+CLONE_SKILL+" | Level : "+CLONE_SKILL_LV;
+close;
+
+OnInit:
+// Skill Display Names
+setarray .skill_name$,"Storm Gust","Meteor Storm","Lord Of Vermilion","Jupitel Thunder","Sightrasher","Cold Bolt","Frost Diver","Fire Ball",
+"Lightning Bolt","Bash","Mangnum Break","Heal","Sight","Napalm Beat","Freezing Spear";
+// Skill ID
+setarray .skill_id,89,83,85,84,81,14,15,17,20,5,7,28,10,11,537;
+// Skill Max Learn-able Level
+setarray .skill_max_level,10,10,10,10,10,10,10,10,10,10,10,10,1,10,10;
+// Skill Cost in Zeny
+setarray .skill_cost,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000,20000;
+
+set .skill_size,getarraysize( .skill_name$ );
+    while( .@i < .skill_size ){
+        set .menu$,.menu$ + "[ ^0055FFLv "+.skill_max_level[.@i]+"^000000 ] "+ .skill_name$[.@i] +":";
+        set .@i,.@i + 1;
+    }
+    end;
+}
