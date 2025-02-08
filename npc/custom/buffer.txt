@@ -133,13 +133,13 @@ amatsu,105,144,6	duplicate(Buffer)	Buffer#ama	936
 ayothaya,223,178,6	duplicate(Buffer)	Buffer#ayo	936
 comodo,184,158,6	duplicate(Buffer)	Buffer#com	936
 einbech,175,131,4	duplicate(Buffer)	Buffer#einbe	936
-einbroch,228,206,6	duplicate(Buffer)	Buffer#einbr	936
+einbroch,227,206,6	duplicate(Buffer)	Buffer#einbr	936
 geffen,115,69,6	duplicate(Buffer)	Buffer#gef	936
 gonryun,156,122,6	duplicate(Buffer)	Buffer#gon	936
 hugel,89,150,6	duplicate(Buffer)	Buffer#hug	936
-izlude,121,150,6	duplicate(Buffer)	Buffer#izl	936	//Pre-RE: (125,118)
+izlude,122,150,6	duplicate(Buffer)	Buffer#izl	936	//Pre-RE: (125,118)
 jawaii,250,139,4	duplicate(Buffer)	Buffer#jaw	936
-lighthalzen,152,100,6	duplicate(Buffer)	Buffer#lhz	936
+lighthalzen,156,100,6	duplicate(Buffer)	Buffer#lhz	936
 louyang,226,103,4	duplicate(Buffer)	Buffer#lou	936
 manuk,272,144,6	duplicate(Buffer)	Buffer#man	936
 mid_camp,203,289,6	duplicate(Buffer)	Buffer#mid	936
@@ -159,7 +159,7 @@ yuno,165,187,4	duplicate(Buffer)	Buffer#yuno	936
 
 // Duplicates (Renewal)
 //============================================================
-brasilis,194,221,6	duplicate(Buffer)	Buffer#bra	936
+brasilis,192,221,6	duplicate(Buffer)	Buffer#bra	936
 dewata,195,186,6	duplicate(Buffer)	Buffer#dew	936
 dicastes01,201,194,4	duplicate(Buffer)	Buffer#dic	936
 ecl_in01,45,60,4	duplicate(Buffer)	Buffer#ecl	936
