@@ -163,7 +163,7 @@ T13: Go("geffen",120,59);
 T14: Go("hugel",95,145);
 T15: Restrict("RE");
 	 Go("icecastle",185,212);
-T16: Go("izlude",127,144(checkre(3)?146:114));
+T16: Go("izlude",127,144);
 T17: Go("jawaii",251,132);
 T18: Go("yuno",157,180);
 T19: Go("gonryun",159,116);

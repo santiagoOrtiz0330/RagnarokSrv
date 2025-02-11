@@ -46,26 +46,26 @@ std::shared_ptr<httplib::Server> http_server;
 
 std::string login_server_ip = "127.0.0.1";
 uint16 login_server_port = 3306;
-std::string login_server_id = "ragnarok";
-std::string login_server_pw = "";
+std::string login_server_id = "root";
+std::string login_server_pw = "ragnarok";
 std::string login_server_db = "ragnarok";
 
 std::string char_server_ip = "127.0.0.1";
 uint16  char_server_port = 3306;
-std::string char_server_id = "ragnarok";
-std::string char_server_pw = "";
+std::string char_server_id = "root";
+std::string char_server_pw = "ragnarok";
 std::string char_server_db = "ragnarok";
 
 std::string map_server_ip = "127.0.0.1";
 uint16 map_server_port = 3306;
-std::string map_server_id = "ragnarok";
-std::string map_server_pw = "";
+std::string map_server_id = "root";
+std::string map_server_pw = "ragnarok";
 std::string map_server_db = "ragnarok";
 
 std::string web_server_ip = "127.0.0.1";
 uint16 web_server_port = 3306;
-std::string web_server_id = "ragnarok";
-std::string web_server_pw = "";
+std::string web_server_id = "root";
+std::string web_server_pw = "ragnarok";
 std::string web_server_db = "ragnarok";
 
 std::string default_codepage = "";
@@ -257,7 +257,7 @@ int32 inter_config_read(const char* cfgName)
 
 
 void web_set_defaults() {
-	web_config.web_ip = "0.0.0.0";
+	web_config.web_ip = "192.168.0.107";
 	web_config.web_port = 8888;
 	safestrncpy(web_config.webconf_name, "conf/web_athena.conf", sizeof(web_config.webconf_name));
 	safestrncpy(web_config.msgconf_name, "conf/msg_conf/web_msg.conf", sizeof(web_config.msgconf_name));

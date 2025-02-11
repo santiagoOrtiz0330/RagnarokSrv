@@ -569,6 +569,7 @@ struct mmo_charstatus {
 
 	t_exp base_exp,job_exp;
 	int32 zeny;
+	uint16 last_used_skill;
 
 	short class_; ///< Player's JobID
 	uint32 status_point,skill_point,trait_point;

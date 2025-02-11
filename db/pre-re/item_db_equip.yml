@@ -41112,7 +41112,7 @@ Body:
       Head_Low: true
     ArmorLevel: 1
     EquipLevelMin: 1
-    View: 1882
+    View: 2371
     Script: |
       bonus bStr,3;
   - Id: 31501
@@ -41126,7 +41126,7 @@ Body:
       Head_Low: true
     ArmorLevel: 1
     EquipLevelMin: 1
-    View: 1883
+    View: 2372
     Script: |
       bonus bInt,3;
   - Id: 31502
@@ -41140,7 +41140,7 @@ Body:
       Head_Low: true
     ArmorLevel: 1
     EquipLevelMin: 1
-    View: 1884
+    View: 2373
     Script: |
       bonus bLuk,2;
       bonus bAgi,2;

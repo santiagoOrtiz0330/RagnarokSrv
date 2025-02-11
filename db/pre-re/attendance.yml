@@ -29,6 +29,82 @@
 #       ItemId              Item ID.
 ###########################################################################
 
+#############################################################################
+# Scrolls Bless
+# Scrolls Agi
+# Scrolls Assump
+# Cajas de Luz
+# Cajas de Acidos
+# Battle Manual 50% dia 1
+# Battle Manual 100% dia 15
+#
+#
+#
+#
+#
+#
+#
+#
+#############################################################################
+
 Header:
   Type: ATTENDANCE_DB
   Version: 1
+
+Body:
+  - Start: 20250208
+    End: 20250228
+    Rewards:
+      - Day: 1
+        ItemId: 501
+      - Day: 2
+        ItemId: 501
+      - Day: 3
+        ItemId: 501
+        Amount: 5
+      - Day: 4
+        ItemId: 501
+        Amount: 5
+      - Day: 5
+        ItemId: 501
+      - Day: 6
+        ItemId: 501
+      - Day: 7
+        ItemId: 501
+        Amount: 3
+      - Day: 8
+        ItemId: 501
+        Amount: 5
+      - Day: 9
+        ItemId: 501
+        Amount: 5
+      - Day: 10
+        ItemId: 501
+      - Day: 11
+        ItemId: 501
+        Amount: 2
+      - Day: 12
+        ItemId: 501
+        Amount: 3
+      - Day: 13
+        ItemId: 501
+        Amount: 5
+      - Day: 14
+        ItemId: 501
+        Amount: 5
+      - Day: 15
+        ItemId: 501
+        Amount: 5
+      - Day: 16
+        ItemId: 501
+        Amount: 5
+      - Day: 17
+        ItemId: 501
+        Amount: 5
+      - Day: 18
+        ItemId: 501
+        Amount: 5
+      - Day: 19
+        ItemId: 501
+      - Day: 20
+        ItemId: 31500

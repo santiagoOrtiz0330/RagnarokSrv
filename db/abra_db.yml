@@ -199,17 +199,17 @@ Body:
   - Skill: SA_CLASSCHANGE
     Probability:
       - Level: 5
-        Probability: 10
+        Probability: 500
       - Level: 6
-        Probability: 10
+        Probability: 600
       - Level: 7
-        Probability: 20
+        Probability: 875
       - Level: 8
-        Probability: 20
+        Probability: 1000
       - Level: 9
-        Probability: 30
+        Probability: 1125
       - Level: 10
-        Probability: 30
+        Probability: 1250
   - Skill: SA_SUMMONMONSTER
     Probability:
       - Level: 1
