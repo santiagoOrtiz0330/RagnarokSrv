@@ -8,6 +8,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <unordered_set>
 
 #include <common/cbasetypes.hpp>
 #include <common/ers.hpp>
@@ -44,6 +45,7 @@
 #include "script.hpp"
 #include "status.hpp"
 #include "unit.hpp"
+#include "winner_ro.hpp"
 
 using namespace rathena;
 
@@ -535,10 +537,15 @@ int32 skill_calc_heal(struct block_list *src, struct block_list *target, uint16 
 			hp = 30 + 5 * skill_lv + (status_get_vit(src) / 2); // HP recovery
 			if (sd)
 				hp += 5 * pc_checkskill(sd, BA_MUSICALLESSON);
+			
+			// WINNER RO: SE GUARDA LA CURACION RELIZADA
+			save_skill_recovery_log_local(src, target, hp, skill_lv, skill_id);
 			break;
 #endif
 		case PR_SANCTUARY:
 			hp = (skill_lv > 6) ? 777 : skill_lv * 100;
+			// WINNER RO: SE GUARDA LA CURACION RELIZADA
+			save_skill_recovery_log_local(src, target, hp, skill_lv, skill_id);
 			break;
 		case NPC_EVILLAND:
 			hp = (skill_lv > 6) ? 666 : skill_lv * 100;
@@ -900,7 +907,7 @@ bool skill_isNotOk( uint16 skill_id, map_session_data& sd ){
 			}
 			break;
 		case MC_VENDING:
-			if (map_getmapflag(sd.bl.m, MF_NOVENDING)) {
+			if (map_getmapflag(sd.bl.m, MF_NOVENDING) || mapdata->getMapFlag(MF_GVG)) {
 				clif_displaymessage(sd.fd, msg_txt(&sd, 276)); // "You can't open a shop on this map"
 				clif_skill_fail( sd, skill_id );
 				return true;
@@ -975,7 +982,11 @@ bool skill_isNotOk( uint16 skill_id, map_session_data& sd ){
 				return true;
 			}
 			break;
-
+		case BD_ROKISWEIL:
+			if (mapdata->getMapFlag(MF_GVG)){
+				clif_msg_color(&sd, MSI_IMPOSSIBLE_SKILL_AREA, color_table[COLOR_CYAN]); // This skill cannot be used within this area.
+				return true;
+			}	
 	}
 	return false;
 }
@@ -4167,7 +4178,7 @@ int32 skill_area_sub(struct block_list *bl, va_list ap)
 	tick = va_arg(ap,t_tick);
 	flag = va_arg(ap,int32);
 	func = va_arg(ap,SkillFunc);
-
+	
 	if (flag&BCT_WOS && src == bl)
 		return 0;
 
@@ -5125,16 +5136,6 @@ int32 skill_castend_damage_id (struct block_list* src, struct block_list *bl, ui
 {
 	map_session_data *sd = nullptr;
 	status_change *sc, *tsc;
-
-
-	int damage = 100;
-    ShowWarning("Insertar Skill");
-    // Llamamos a la función para guardar en la BD
-    if (src && src->type == BL_PC) { // Verifica que el atacante sea un personaje
-	    ShowWarning("Ingrese Insertar Skill");
-        map_session_data *sd = BL_CAST(BL_PC, src);
-        log_skill_use(sd->status.char_id, skill_id, skill_lv, damage, bl->id);
-    }
 
 
 	if (skill_id > 0 && !skill_lv) return 0;
@@ -7348,19 +7349,6 @@ int32 skill_castend_damage_id (struct block_list* src, struct block_list *bl, ui
 }
 
 
-void log_skill_use(int char_id, int skill_id, int skill_lv, int damage, int target_id) {
-    char query[256];
-	// Sql* sql_handle = db->accounts;
-	// SqlStmt stmt{ *sql_handle };
-	mmysql_handle = Sql_Malloc();
-    snprintf(query, sizeof(query),
-        "INSERT INTO skill_logs (char_id, skill_id, skill_lv, damage, target_id) VALUES (%d, %d, %d, %d, %d)",
-        char_id, skill_id, skill_lv, damage, target_id);
-    
-    if (SQL_ERROR == Sql_QueryStr(mmysql_handle, query)) {
-        Sql_ShowDebug(mmysql_handle);
-    }
-}
 
 /**
  * Give a song's buff/debuff or damage to all targets around
@@ -7579,7 +7567,11 @@ int32 skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, 
 					heal = 0; //Needed so that it actually displays 0 when healing.
 			}
 			if (skill_id == AL_HEAL)
+			{
 				status_change_end(bl, SC_BITESCAR);
+				// WINNER RO: SE GUARDA LA CURACION RELIZADA
+				save_skill_recovery_log_local(src, bl, heal, skill_lv, skill_id);
+			}
 			clif_skill_nodamage(src, *bl, skill_id, heal);
 			if( tsc && tsc->getSCE(SC_AKAITSUKI) && heal && skill_id != HLIF_HEAL )
 				heal = ~heal + 1;
@@ -10598,6 +10590,9 @@ int32 skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, 
 				clif_skill_nodamage(nullptr,*bl,AL_HEAL,hp);
 			if(sp > 0)
 				clif_skill_nodamage(nullptr,*bl,MG_SRECOVERY,sp);
+
+			// WINNER RO: SE GUARDA LA CURACION RELIZADA
+			save_skill_recovery_log_local(src, bl, hp, skill_lv, skill_id);
 			status_heal(bl,hp,sp,0);
 		}
 		break;
@@ -13479,6 +13474,10 @@ int32 skill_castend_nodamage_id (struct block_list *src, struct block_list *bl, 
  * @return -1 success, others are failed @see enum useskill_fail_cause.
  **/
 static int8 skill_castend_id_check(struct block_list *src, struct block_list *target, uint16 skill_id, uint16 skill_lv) {
+
+	// WINNER RO: SE GUARDA LAS ULTIMAS SKILL USADAS Y SE DEJA LOG DE TODAS LAS SKILLS EN MAPAS DE WOE
+	save_skill_log_local(src, skill_id, skill_lv);
+
 	std::shared_ptr<s_skill_db> skill = skill_db.find(skill_id);
 	int32 inf = skill->inf;
 	status_change *tsc = status_get_sc(target);
@@ -14230,6 +14229,21 @@ int32 skill_castend_pos2(struct block_list* src, int32 x, int32 y, uint16 skill_
 	std::shared_ptr<s_skill_unit_group> sg;
 	enum sc_type type;
 	int32 i;
+
+	// WINNER RO: SE GUARDA LAS ULTIMAS SKILL USADAS Y SE DEJA LOG DE TODAS LAS SKILLS EN MAPAS DE WOE
+	// SE EXCLUYEN LAS CANCIONES EN ESTE LADO YA QUE SE ESTAN GUARDANDO EN skill_castend_id_check()
+	std::unordered_set<int> excluded_skills = {
+		BD_LULLABY, BD_RICHMANKIM, BD_ETERNALCHAOS, BD_DRUMBATTLEFIELD,
+		BD_RINGNIBELUNGEN, BD_ROKISWEIL, BD_INTOABYSS, BD_SIEGFRIED,
+		BA_DISSONANCE, BA_POEMBRAGI, BA_WHISTLE, BA_ASSASSINCROSS,
+		BA_APPLEIDUN, DC_UGLYDANCE, DC_HUMMING, DC_DONTFORGETME,
+		DC_FORTUNEKISS, DC_SERVICEFORYOU
+	};
+	
+	if (excluded_skills.find(skill_id) == excluded_skills.end()) {
+		save_skill_log_local(src, skill_id, skill_lv);
+	}
+	// WINNER RO: FIN
 
 	//if(skill_lv <= 0) return 0;
 	if(skill_id > 0 && !skill_lv) return 0;	// celest

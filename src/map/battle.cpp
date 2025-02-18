@@ -33,6 +33,7 @@
 #include "pc.hpp"
 #include "pc_groups.hpp"
 #include "pet.hpp"
+#include "winner_ro.hpp"
 
 using namespace rathena;
 
@@ -276,6 +277,10 @@ struct block_list* battle_getenemyarea(struct block_list *src, int32 x, int32 y,
 */
 int32 battle_damage(struct block_list *src, struct block_list *target, int64 damage, t_tick delay, uint16 skill_lv, uint16 skill_id, enum damage_lv dmg_lv, uint16 attack_type, bool additional_effects, t_tick tick, bool isspdamage) {
 	int32 dmg_change;
+
+	// WINNER RO: SE GUARDA LOS DANIOS DE TODAS LAS FUENTES POSIBLES PLAYER VS PLAYER DURANTE WOE
+	save_damage_log_local(src, target, damage,  skill_lv, skill_id);
+
 	map_session_data* sd = nullptr;
 	if (src)
 		sd = BL_CAST(BL_PC, src);

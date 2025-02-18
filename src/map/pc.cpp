@@ -63,6 +63,7 @@
 #include "storage.hpp"
 #include "unit.hpp" // unit_stop_attack(), unit_stop_walking()
 #include "vending.hpp" // struct s_vending
+#include "winner_ro.hpp"
 
 using namespace rathena;
 
@@ -6328,7 +6329,7 @@ bool pc_isUseitem(map_session_data *sd,int32 n)
 int32 pc_useitem(map_session_data *sd,int32 n)
 {
 	t_tick tick = gettick();
-	int32 amount;
+	int32 amount, hp = 0, sp = 0;
 	t_itemid nameid;
 	struct script_code *script;
 	struct item item;
@@ -6357,6 +6358,15 @@ int32 pc_useitem(map_session_data *sd,int32 n)
 
 	if (item.nameid == 0 || item.amount <= 0)
 		return 0;
+
+	/* WINNER RO: SE REGISTRAN EN EL LOG LOS ITEMS DIFERENTES A HEALING ITEMS O ITEMS COMO GREEN POTION, PANACEA O YGG BERRY, DURANTE WOE*/
+	if( id->type != IT_HEALING || item.nameid == 506 || item.nameid == 525 || item.nameid == 607){
+		if (item.nameid == 607){
+			hp = sd->status.max_hp;
+			sp = sd->status.max_sp;
+		}
+		save_usable_item_log_local(sd, id, hp, sp);
+	}
 
 	if( !pc_isUseitem(sd,n) )
 		return 0;
@@ -9635,6 +9645,10 @@ int32 pc_dead(map_session_data *sd,struct block_list *src)
 	t_tick tick = gettick();
 	struct map_data *mapdata = map_getmapdata(sd->bl.m);
 
+	
+	// WINNER RO: SE GUARDA LAS KILLS EN EL LOG EN MAPAS DE WOE
+	save_kill_log_local(sd, src);
+
 	// Activate Steel body if a super novice dies at 99+% exp [celest]
 	// Super Novices have no kill or die functions attached when saved by their angel
 	if (!sd->state.snovice_dead_flag && (sd->class_&MAPID_UPPERMASK) == MAPID_SUPER_NOVICE) {
@@ -10634,6 +10648,11 @@ int32 pc_itemheal(map_session_data *sd, t_itemid itemid, int32 hp, int32 sp)
 		if (sd->sc.getSCE(SC_BITESCAR))
 			hp = 0;
 	}
+
+	/* WINNER RO: SE REGISTRAN EN EL LOG LOS HEALING ITEMS DURANTE WOE*/
+	struct item_data *i_data;
+	i_data = itemdb_search(itemid);
+	save_usable_item_log_local(sd, i_data, hp, sp);
 
 	return status_heal(&sd->bl, hp, sp, 1);
 }

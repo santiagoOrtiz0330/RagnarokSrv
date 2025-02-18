@@ -31,6 +31,7 @@
 #include "pc.hpp"
 #include "storage.hpp"
 #include "trade.hpp"
+#include "winner_ro.hpp"
 
 using namespace rathena;
 
@@ -2553,6 +2554,15 @@ bool guild_agit_end(void){
 
 	npc_event_runall( script_config.agit_end_event_name );
 
+	/* SCRIPTS PARA SUBIR TODOS LOS LOGS DE SKILLS, DAMAGE Y KILLS DE LA WOE*/
+	save_skill_log_db();
+	save_damage_log_db();
+	save_kill_log_db();
+	save_skill_recovery_log_db();
+	save_usable_item_log_db();
+
+	intif_broadcast("The WoE statistics have been successfully uploaded to the Winner RO website.", strlen("The WoE statistics have been successfully uploaded to the Winner RO website.") + 1, BC_YELLOW);
+	
 	return true;
 }
 
