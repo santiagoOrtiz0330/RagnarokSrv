@@ -38,6 +38,10 @@ Gunslinger - OK
 ---------------------------------------------------------------------------------------------------------
 Revisar que se pueda mostrar en el log de skill_recovery la curacion a emperium
 
+------------------------------------------------------------
+
+Las comidas de Combat no se estan guardando en el log de usables
+
 */
 
 std::string log_path = "woe_log/";
@@ -95,23 +99,45 @@ void save_skill_log_db(void){
 		char time_str[32];
 		int char_id, guild_id, skill_id, skill_lv;
 		char query[512];
+		std::stringstream ss;
+        int count = 0;
+        const int BATCH_SIZE = 100; // Número de filas por lote
 
 
 		while (fgets(line, sizeof(line), log_file)) {
 			if (sscanf(line, "%31[^|]|%d|%d|%d|%d",
 						time_str, &char_id, &guild_id, &skill_id, &skill_lv) == 5) {
-	
-				snprintf(query, sizeof(query),
-							"INSERT INTO woe_skill_log (timestamp, char_id, guild_id, skill_id, skill_lv) "
-							"VALUES ('%s', %d, %d, %d, %d);",
-							time_str, char_id, guild_id, skill_id, skill_lv);
-	
-				if (Sql_Query(logmysql_handle, query) != SQL_SUCCESS) {
-					Sql_ShowDebug(logmysql_handle);
-				}
 
+				// Si ya se agregó al menos una fila, agrega una coma para separar los valores
+				if (count > 0) {
+					ss << ", ";
+				}
+				// Agregar la fila al stringstream; escapamos las comillas simples en time_str si fuera necesario
+				ss << "('" << time_str << "', " << char_id << ", " << guild_id << ", "
+					<< skill_id << ", " << skill_lv << ")";
+				count++;
+
+				// Si alcanzamos el tamaño de lote, ejecutamos el INSERT
+				if (count >= BATCH_SIZE) {
+					std::string query = "INSERT INTO woe_skill_log (timestamp, char_id, guild_id, skill_id, skill_lv) VALUES " + ss.str() + ";";
+					if (Sql_Query(logmysql_handle, query.c_str()) != SQL_SUCCESS) {
+						Sql_ShowDebug(logmysql_handle);
+					}
+					// Limpiar el acumulador y reiniciar el contador
+					ss.str("");
+					ss.clear();
+					count = 0;
+				}
 			}
 		}
+		// Insertar cualquier fila pendiente que no haya alcanzado el tamaño del lote
+        if (count > 0) {
+            std::string query = "INSERT INTO woe_skill_log (timestamp, char_id, guild_id, skill_id, skill_lv) VALUES " + ss.str() + ";";
+            if (Sql_Query(logmysql_handle, query.c_str()) != SQL_SUCCESS) {
+                Sql_ShowDebug(logmysql_handle);
+            }
+        }
+
 		fclose(log_file);
 		remove(log_file_path.c_str()); 
 
@@ -177,27 +203,51 @@ void save_damage_log_db(void){
 		char time_str[32];
 		int attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, target_char_id,target_guild_id, attacker_damage;
 		char query[512];
+		std::stringstream ss;
+        int count = 0;
+        const int BATCH_SIZE = 100; // Número de filas por lote
 
 
 		while (fgets(line, sizeof(line), log_file)) {
 			if (sscanf(line, "%31[^|]|%d|%d|%d|%d|%d|%d|%d",
 						time_str, &attacker_char_id, &attacker_guild_id, &attacker_skill_id, &attacker_skill_lv, &target_char_id, &target_guild_id, &attacker_damage) == 8) {
 	
-				snprintf(query, sizeof(query),
-							"INSERT INTO woe_damage_log (timestamp, attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, target_char_id, target_guild_id, attacker_damage) "
-							"VALUES ('%s', %d, %d, %d, %d, %d, %d, %d);",
-							time_str, attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, target_char_id, target_guild_id, attacker_damage);
-	
-				if (Sql_Query(logmysql_handle, query) != SQL_SUCCESS) {
-					Sql_ShowDebug(logmysql_handle);
+				// Si ya se agregó al menos una fila, agrega una coma para separar los valores
+				if (count > 0) {
+					ss << ", ";
+				}
+				// Agregar la fila al stringstream; escapamos las comillas simples en time_str si fuera necesario
+				ss << "('" << time_str << "', " << attacker_char_id << ", " << attacker_guild_id << ", "
+					<< attacker_skill_id << ", " << attacker_skill_lv << ", " << target_char_id << ", "
+					<< target_guild_id << ", " << attacker_damage << ")";
+				count++;
+
+				// Si alcanzamos el tamaño de lote, ejecutamos el INSERT
+				if (count >= BATCH_SIZE) {
+					std::string query = "INSERT INTO woe_damage_log (timestamp, attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, target_char_id, target_guild_id, attacker_damage) VALUES " + ss.str() + ";";
+					if (Sql_Query(logmysql_handle, query.c_str()) != SQL_SUCCESS) {
+						Sql_ShowDebug(logmysql_handle);
+					}
+					// Limpiar el acumulador y reiniciar el contador
+					ss.str("");
+					ss.clear();
+					count = 0;
 				}
 
 			}
 		}
+		// Insertar cualquier fila pendiente que no haya alcanzado el tamaño del lote
+        if (count > 0) {
+            std::string query = "INSERT INTO woe_damage_log (timestamp, attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, target_char_id, target_guild_id, attacker_damage) VALUES " + ss.str() + ";";
+            if (Sql_Query(logmysql_handle, query.c_str()) != SQL_SUCCESS) {
+                Sql_ShowDebug(logmysql_handle);
+            }
+        }
+
 		fclose(log_file);
 		remove(log_file_path.c_str());
 
-		ShowMessage("Se han guardado los logs de danio de WoE en la base de datos Winner Ro.\n");
+		ShowMessage("Se han guardado los logs de damage de WoE en la base de datos Winner Ro.\n");
 	}
 }
 
@@ -240,39 +290,67 @@ void save_kill_log_local(map_session_data *sd, block_list *src) {
 }
 
 /* SUBE A LA BASE DE DATOS EL LOG DE KILLS LOCAL QUE SE GENERO DURANTE LA WOE*/
-void save_kill_log_db(void){
-	// Construir la ruta completa del archivo de log
-	std::string log_file_path = log_path + "kill_log.txt";
+void save_kill_log_db(void) {
+    // Construir la ruta completa del archivo de log
+    std::string log_file_path = log_path + "kill_log.txt";
 
-	// Abrir el archivo de log para leer los datos
-	FILE *log_file = fopen(log_file_path.c_str(), "r");
-	if (log_file) {
-		char line[256];
+    // Abrir el archivo de log para leer los datos
+    FILE *log_file = fopen(log_file_path.c_str(), "r");
+    if (log_file) {
+        char line[256];
 		char time_str[32];
 		int attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, target_char_id,target_guild_id;
 		char query[512];
+        std::stringstream ss;
+        int count = 0;
+        const int BATCH_SIZE = 100; // Número de filas por lote
 
+        // Recorrer el archivo línea por línea
+        while (fgets(line, sizeof(line), log_file)) {
+            if (sscanf(line, "%31[^|]|%d|%d|%d|%d|%d|%d",
+                       time_str,
+                       &attacker_char_id,
+                       &attacker_guild_id,
+                       &attacker_skill_id,
+                       &attacker_skill_lv,
+                       &target_char_id,
+                       &target_guild_id) == 7)
+            {
+                // Si ya se agregó al menos una fila, agrega una coma para separar los valores
+                if (count > 0) {
+                    ss << ", ";
+                }
+                // Agregar la fila al stringstream; escapamos las comillas simples en time_str si fuera necesario
+                ss << "('" << time_str << "', " << attacker_char_id << ", " << attacker_guild_id << ", "
+                   << attacker_skill_id << ", " << attacker_skill_lv << ", " << target_char_id << ", "
+                   << target_guild_id << ")";
+                count++;
 
-		while (fgets(line, sizeof(line), log_file)) {
-			if (sscanf(line, "%31[^|]|%d|%d|%d|%d|%d|%d",
-						time_str, &attacker_char_id, &attacker_guild_id, &attacker_skill_id, &attacker_skill_lv, &target_char_id, &target_guild_id) == 7) {
-	
-				snprintf(query, sizeof(query),
-							"INSERT INTO woe_kill_log (timestamp, attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, victim_char_id, victim_guild_id) "
-							"VALUES ('%s', %d, %d, %d, %d, %d, %d);",
-							time_str, attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, target_char_id, target_guild_id);
-	
-				if (Sql_Query(logmysql_handle, query) != SQL_SUCCESS) {
-					Sql_ShowDebug(logmysql_handle);
-				}
+                // Si alcanzamos el tamaño de lote, ejecutamos el INSERT
+                if (count >= BATCH_SIZE) {
+                    std::string query = "INSERT INTO woe_kill_log (timestamp, attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, victim_char_id, victim_guild_id) VALUES " + ss.str() + ";";
+                    if (Sql_Query(logmysql_handle, query.c_str()) != SQL_SUCCESS) {
+                        Sql_ShowDebug(logmysql_handle);
+                    }
+                    // Limpiar el acumulador y reiniciar el contador
+                    ss.str("");
+                    ss.clear();
+                    count = 0;
+                }
+            }
+        }
+        // Insertar cualquier fila pendiente que no haya alcanzado el tamaño del lote
+        if (count > 0) {
+            std::string query = "INSERT INTO woe_kill_log (timestamp, attacker_char_id, attacker_guild_id, attacker_skill_id, attacker_skill_lv, victim_char_id, victim_guild_id) VALUES " + ss.str() + ";";
+            if (Sql_Query(logmysql_handle, query.c_str()) != SQL_SUCCESS) {
+                Sql_ShowDebug(logmysql_handle);
+            }
+        }
+        fclose(log_file);
+        remove(log_file_path.c_str());
 
-			}
-		}
-		fclose(log_file);
-		remove(log_file_path.c_str());
-
-		ShowMessage("Se han guardado los logs de kills de WoE en la base de datos Winner Ro.\n");
-	}
+        ShowMessage("Se han guardado los logs de kills de WoE en la base de datos Winner Ro.\n");
+    }
 }
 
 //GUARDA EN UNA RUTA LOCAL EL LOG DE LAS RECOVERY SKILLS (Heal, AppleOfIdun, Spp) PARA DEPUES SUBIRLO AL LOG DE WINNER RO EN LA PAGINA WEB

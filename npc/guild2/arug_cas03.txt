@@ -72,3 +72,16 @@ OnRecvCastleAr03:
 	end;
 }
 aru_gld,74,174,0	duplicate(Ar03_Flag)	Horn#flag_Ar03_2	722
+
+
+-	script	Horn#5::InsideFlagsARG1	722,{
+	end;
+
+OnRecvCastlePt01:
+	FlagEmblem GetCastleData("arug_cas03",1);
+	end;
+}
+
+// Guild Flag (Town)
+//============================================================
+prontera,165,194,5	duplicate(InsideFlagsARG1)	Horn#flag_Ar03_14	722

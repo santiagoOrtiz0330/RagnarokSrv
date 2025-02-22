@@ -656,6 +656,18 @@ uint64 ItemDatabase::parseBodyNode(const ryml::NodeRef& node) {
 				item->flag.dead_branch = false;
 		}
 
+		if (this->nodeExists(flagNode, "CombatItem")) {
+			bool active;
+
+			if (!this->asBool(flagNode, "CombatItem", active))
+				return 0;
+
+			item->flag.combat_item = active;
+		} else {
+			if (!exists)
+				item->flag.combat_item = false;
+		}
+
 		if (this->nodeExists(flagNode, "Container")) {
 			bool active;
 
@@ -753,6 +765,7 @@ uint64 ItemDatabase::parseBodyNode(const ryml::NodeRef& node) {
 			item->flag.guid = false;
 			item->flag.bindOnEquip = false;
 			item->flag.broadcast = false;
+			item->flag.combat_item = false;
 			if (!(item->flag.delay_consume & DELAYCONSUME_TEMP))
 				item->flag.delay_consume = DELAYCONSUME_NONE;
 			item->flag.dropEffect = DROPEFFECT_NONE;

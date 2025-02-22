@@ -6,9 +6,9 @@
 
 -	script	Buffer	-1,{
 
-	.@PriceHeal = 100;	// Zeny required for heal
+	.@PriceHeal = 1000;	// Zeny required for heal
 	.@PriceEndow = 20000;
-	.@PriceLink = 200;
+	.@PriceLink = 20000;
 	.@Delay = 0;	// Heal delay, in seconds
 	.@Ticks = 1800000;		// Time in ticks for duration of Endow.
 
@@ -16,7 +16,7 @@
 	setarray .EndowSC[1],SC_WATERWEAPON,SC_FIREWEAPON,SC_EARTHWEAPON,SC_WINDWEAPON,SC_ASPERSIO,SC_SHADOWWEAPON,SC_GHOSTWEAPON;
 
 
-	select("Heal:Weapon Enchanment:Soul Link");
+	select("Heal [^0055FF1.000z^000000]:Weapon Enchanment [^0055FF20.000z^000000]:Soul Link [^0055FF20.000z^000000]");
 	switch ( @menu ) {
 		case 1:
 			if(Zeny<.@PriceHeal){
@@ -127,42 +127,42 @@
 
 // Duplicates
 //============================================================
-alberta,25,240,6	duplicate(Buffer)	Buffer#alb	936
-aldebaran,135,118,6	duplicate(Buffer)	Buffer#alde	936
-amatsu,105,144,6	duplicate(Buffer)	Buffer#ama	936
-ayothaya,223,178,6	duplicate(Buffer)	Buffer#ayo	936
-comodo,184,158,6	duplicate(Buffer)	Buffer#com	936
-einbech,175,131,4	duplicate(Buffer)	Buffer#einbe	936
-einbroch,227,206,6	duplicate(Buffer)	Buffer#einbr	936
-geffen,115,69,6	duplicate(Buffer)	Buffer#gef	936
-gonryun,156,122,6	duplicate(Buffer)	Buffer#gon	936
-hugel,89,150,6	duplicate(Buffer)	Buffer#hug	936
-izlude,122,150,6	duplicate(Buffer)	Buffer#izl	936	//Pre-RE: (125,118)
-jawaii,250,139,4	duplicate(Buffer)	Buffer#jaw	936
-lighthalzen,156,100,6	duplicate(Buffer)	Buffer#lhz	936
-louyang,226,103,4	duplicate(Buffer)	Buffer#lou	936
-manuk,272,144,6	duplicate(Buffer)	Buffer#man	936
-mid_camp,203,289,6	duplicate(Buffer)	Buffer#mid	936
-moc_ruins,72,164,4	duplicate(Buffer)	Buffer#moc	936
-morocc,153,97,6	duplicate(Buffer)	Buffer#mor	936
-moscovia,220,191,4	duplicate(Buffer)	Buffer#mos	936
-niflheim,212,182,5	duplicate(Buffer)	Buffer#nif	936
-payon,179,106,4	duplicate(Buffer)	Buffer#pay	936
-prontera,162,193,4	duplicate(Buffer)	Buffer#prt	936
-rachel,125,116,6	duplicate(Buffer)	Buffer#rac	936
-splendide,201,153,4	duplicate(Buffer)	Buffer#spl	936
-thor_camp,249,74,4	duplicate(Buffer)	Buffer#thor	936
-umbala,105,148,3	duplicate(Buffer)	Buffer#umb	936
-veins,223,132,4	duplicate(Buffer)	Buffer#ve	936
-xmas,143,136,6	duplicate(Buffer)	Buffer#xmas	936
-yuno,165,187,4	duplicate(Buffer)	Buffer#yuno	936
+alberta,25,240,6	duplicate(Buffer)	Buffer#alb	864
+aldebaran,135,118,6	duplicate(Buffer)	Buffer#alde	864
+amatsu,105,144,6	duplicate(Buffer)	Buffer#ama	864
+ayothaya,223,178,6	duplicate(Buffer)	Buffer#ayo	864
+comodo,184,158,6	duplicate(Buffer)	Buffer#com	864
+einbech,175,131,4	duplicate(Buffer)	Buffer#einbe	864
+einbroch,227,206,6	duplicate(Buffer)	Buffer#einbr	864
+geffen,115,69,6	duplicate(Buffer)	Buffer#gef	864
+gonryun,156,122,6	duplicate(Buffer)	Buffer#gon	864
+hugel,89,150,6	duplicate(Buffer)	Buffer#hug	864
+izlude,122,150,6	duplicate(Buffer)	Buffer#izl	864	//Pre-RE: (125,118)
+jawaii,250,139,4	duplicate(Buffer)	Buffer#jaw	864
+lighthalzen,156,100,6	duplicate(Buffer)	Buffer#lhz	864
+louyang,226,103,4	duplicate(Buffer)	Buffer#lou	864
+manuk,272,144,6	duplicate(Buffer)	Buffer#man	864
+mid_camp,203,289,6	duplicate(Buffer)	Buffer#mid	864
+moc_ruins,72,164,4	duplicate(Buffer)	Buffer#moc	864
+morocc,153,97,6	duplicate(Buffer)	Buffer#mor	864
+moscovia,220,191,4	duplicate(Buffer)	Buffer#mos	864
+niflheim,212,182,5	duplicate(Buffer)	Buffer#nif	864
+payon,179,106,4	duplicate(Buffer)	Buffer#pay	864
+prontera,162,193,4	duplicate(Buffer)	Buffer#prt	864
+rachel,125,116,6	duplicate(Buffer)	Buffer#rac	864
+splendide,201,153,4	duplicate(Buffer)	Buffer#spl	864
+thor_camp,249,74,4	duplicate(Buffer)	Buffer#thor	864
+umbala,105,148,3	duplicate(Buffer)	Buffer#umb	864
+veins,223,132,4	duplicate(Buffer)	Buffer#ve	864
+xmas,143,136,6	duplicate(Buffer)	Buffer#xmas	864
+yuno,165,187,4	duplicate(Buffer)	Buffer#yuno	864
 
 // Duplicates (Renewal)
 //============================================================
-brasilis,192,221,6	duplicate(Buffer)	Buffer#bra	936
-dewata,195,186,6	duplicate(Buffer)	Buffer#dew	936
-dicastes01,201,194,4	duplicate(Buffer)	Buffer#dic	936
-ecl_in01,45,60,4	duplicate(Buffer)	Buffer#ecl	936
-malangdo,132,114,6	duplicate(Buffer)	Buffer#mal	936
-malaya,227,204,6	duplicate(Buffer)	Buffer#ma	936
-mora,49,149,6	duplicate(Buffer)	Buffer#mora	936
+brasilis,192,221,6	duplicate(Buffer)	Buffer#bra	864
+dewata,195,186,6	duplicate(Buffer)	Buffer#dew	864
+dicastes01,201,194,4	duplicate(Buffer)	Buffer#dic	864
+ecl_in01,45,60,4	duplicate(Buffer)	Buffer#ecl	864
+malangdo,132,114,6	duplicate(Buffer)	Buffer#mal	864
+malaya,227,204,6	duplicate(Buffer)	Buffer#ma	864
+mora,49,149,6	duplicate(Buffer)	Buffer#mora	864

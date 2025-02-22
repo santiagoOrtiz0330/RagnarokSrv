@@ -93,8 +93,8 @@ payg_cas04,239,181,4	duplicate(InsideFlagsPA4)	Sacred Altar#10	722
 
 // Guild Flag (Town)
 //============================================================
-payon,118,322,4	duplicate(InsideFlagsPA4)	Sacred Altar#11	722
-payon,166,165,3	duplicate(InsideFlagsPA4)	Sacred Altar#12	722
+//payon,118,322,4	duplicate(InsideFlagsPA4)	Sacred Altar#11	722
+//payon,166,165,3	duplicate(InsideFlagsPA4)	Sacred Altar#12	722
 
 // Kafra Employee
 //============================================================

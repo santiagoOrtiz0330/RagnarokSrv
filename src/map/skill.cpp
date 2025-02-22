@@ -14225,6 +14225,7 @@ int32 skill_castend_pos2(struct block_list* src, int32 x, int32 y, uint16 skill_
 {
 	map_session_data* sd;
 	status_change* sc;
+
 	struct status_change_entry *sce;
 	std::shared_ptr<s_skill_unit_group> sg;
 	enum sc_type type;
@@ -14258,6 +14259,14 @@ int32 skill_castend_pos2(struct block_list* src, int32 x, int32 y, uint16 skill_
 	sc = status_get_sc(src);
 	type = skill_get_sc(skill_id);
 	sce = (sc && type != SC_NONE)?sc->getSCE(type):nullptr;
+
+	// WINNER RO: SE VALIDA EL TOWNSKILL PARA SABER CUAL FUE LA ULTIMA SKILL ACTIVADA PARA SEGUIR TOCANDO ESA CANCION
+	// Ahora verifica si skill_id SÍ está en la lista y agregamos gospel a la validacion
+	if (excluded_skills.find(skill_id) != excluded_skills.end() || skill_id == PA_GOSPEL) { 
+		sd->townskill.townskill_skill_id = skill_id;
+		sd->townskill.townskill_skill_lv = skill_lv;
+	}
+	// WINNER RO: FIN
 
 	switch (skill_id) { //Skill effect.
 		case WZ_METEOR:
@@ -19723,6 +19732,34 @@ struct s_skill_condition skill_get_requirement(map_session_data* sd, uint16 skil
 				// Check requirement for Magic Gear Fuel
 				if (req.itemid[i] == ITEMID_MAGIC_GEAR_FUEL && sd->special_state.no_mado_fuel)
 					req.itemid[i] = req.amount[i] = 0;
+
+				// WINNER RO: SE MODIFICA EL REQUIREMENTS PARA USAR ITEMS UNIVERSALES OBTENIDOS POR TELMA
+				map_data *mapdata = map_getmapdata(sd->bl.m);
+				if (mapdata && mapdata->getMapFlag(MF_GVG)) {
+					std::unordered_map<int, int> alternate_items = {
+						{ ITEMID_BLUE_GEMSTONE, ITEMID_BLUE_GEMSTONE2 },
+						{ ITEMID_RED_GEMSTONE, ITEMID_RED_GEMSTONE2 },
+						{ ITEMID_YELLOW_GEMSTONE, ITEMID_YELLOW_GEMSTONE2 },
+						{ ITEMID_WHITE_SLIM_POTION, ITEMID_WHITE_SLIM_POTION2 },
+						{ ITEMID_FIRE_BOTTLE, ITEMID_FIRE_BOTTLE2 },
+						{ ITEMID_ACID_BOTTLE, ITEMID_ACID_BOTTLE2 },
+						{ ITEMID_COBWEB, ITEMID_COBWEB2 },
+						{ ITEMID_COATING_BOTTLE, ITEMID_COATING_BOTTLE2 },
+						{ ITEMID_MAN_EATER_BOTTLE, ITEMID_MAN_EATER_BOTTLE2 },
+						{ ITEMID_FRAGMENT_OF_CRYSTAL, ITEMID_FRAGMENT_OF_CRYSTAL2 },
+						{ ITEMID_POISON_BOTTLE, ITEMID_POISON_BOTTLE2 }
+						// Puedes seguir agregando más pares de ítems aquí
+					};
+					
+					auto it = alternate_items.find(skill->require.itemid[i]);
+					if (it != alternate_items.end()) { // Si el item tiene una alternativa
+						if (pc_search_inventory(sd, it->first) < 0) { // No tiene el ítem principal
+							if (pc_search_inventory(sd, it->second) >= 0) // Pero sí tiene la alternativa
+								req.itemid[i] = it->second;
+						}
+					}
+				}
+				// WINNER RO: FIN
 			}
 			break;
 	}

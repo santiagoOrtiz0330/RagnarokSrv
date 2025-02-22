@@ -6834,3 +6834,13 @@ Body:
     Script: |
       bonus bAspdRate, getstatus(SC_ACARAJE, 1);
       bonus bHit, getstatus(SC_ACARAJE, 2);
+  - Status: Townskill
+    Icon: EFST_TOWNSKILL
+    Flags:
+      NoRemoveOnDead: true
+      NoClearbuff: true
+      NoSave: true
+      NoDispell: true
+      NoBanishingBuster: true
+      NoClearance: true
+      NoForcedEnd: true

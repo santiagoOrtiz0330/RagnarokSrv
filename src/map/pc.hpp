@@ -480,7 +480,11 @@ public:
 	int32 count_rewarp; //count how many time we being rewarped
 	int last_skill_id; // Última skill usada
 	int last_skill_lv; // Nivel de la última skill usada
-	bool townskill_active; //Flag to validate if @townskill is active
+	struct {
+		bool townskill_active;  //Flag to validate if @townskill is active
+		int townskill_skill_id; // Última skill usada para townskill
+		int townskill_skill_lv; // Nivel de la última skill usada para townskill
+	} townskill;
 	int32 langtype;
 	struct mmo_charstatus status;
 

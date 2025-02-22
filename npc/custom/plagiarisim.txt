@@ -1,7 +1,7 @@
 
 
 
-prontera,146,172,8	script	Plagiarisim	637,{
+prontera,146,172,5	script	Plagiarisim	747,{
 set .@skill_level,getskilllv( "RG_PLAGIARISM" );
 
 mes "I provide skill to Stalker Class.";

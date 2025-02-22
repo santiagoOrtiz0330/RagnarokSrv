@@ -10382,6 +10382,7 @@ int32 status_change_start(struct block_list* src, struct block_list* bl,enum sc_
 		case SC_CLAN_INFO:
 		case SC_DAILYSENDMAILCNT:
 		case SC_SOULATTACK:
+		case SC_TOWNSKILL:
 			tick = INFINITE_TICK;
 			break;
 

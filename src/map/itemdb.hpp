@@ -58,6 +58,7 @@ enum item_itemid : t_itemid
 	ITEMID_POISON_BOTTLE				= 678,
 	ITEMID_EMPTY_BOTTLE					= 713,
 	ITEMID_EMPERIUM						= 714,
+	ITEMID_YELLOW_GEMSTONE				= 715,
 	ITEMID_RED_GEMSTONE					= 716,
 	ITEMID_BLUE_GEMSTONE				= 717,
 	ITEMID_ORIDECON_STONE				= 756,
@@ -81,6 +82,7 @@ enum item_itemid : t_itemid
 	ITEMID_IRON_ORE						= 1002,
 	ITEMID_PHRACON						= 1010,
 	ITEMID_EMVERETARCON					= 1011,
+	ITEMID_COBWEB						= 1025,
 	ITEMID_TRAP							= 1065,
 	ITEMID_ANGRA_MANYU					= 1599,
 	ITEMID_PAINT_BRUSH					= 6122,
@@ -114,6 +116,17 @@ enum item_itemid : t_itemid
 	ITEMID_INVENTORY_EX_EVT				= 25791,
 	ITEMID_INVENTORY_EX_DIS				= 25792,
 	ITEMID_INVENTORY_EX					= 25793,
+	ITEMID_WHITE_SLIM_POTION2			= 40002,
+	ITEMID_POISON_BOTTLE2				= 40021,
+	ITEMID_YELLOW_GEMSTONE2				= 40050,
+	ITEMID_RED_GEMSTONE2				= 40051,
+	ITEMID_BLUE_GEMSTONE2				= 40052,
+	ITEMID_FIRE_BOTTLE2					= 40053,
+	ITEMID_ACID_BOTTLE2					= 40054,
+	ITEMID_COBWEB2						= 40055,
+	ITEMID_COATING_BOTTLE2				= 40056,
+	ITEMID_MAN_EATER_BOTTLE2			= 40057,
+	ITEMID_FRAGMENT_OF_CRYSTAL2			= 40058,
 	ITEMID_WL_MB_SG						= 100065,
 	ITEMID_HOMUNCULUS_SUPPLEMENT		= 100371,
 };
@@ -3235,6 +3248,7 @@ struct item_data
 		bool broadcast; ///< Will be broadcasted if someone obtain the item [Cydh]
 		bool bindOnEquip; ///< Set item as bound when equipped
 		e_item_drop_effect dropEffect; ///< Drop Effect Mode
+		bool combat_item;
 		unsigned gradable : 1;
 	} flag;
 	struct {// item stacking limitation

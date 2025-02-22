@@ -6187,6 +6187,9 @@ bool pc_isUseitem(map_session_data *sd,int32 n)
 	if (item->flag.dead_branch && (mapdata->getMapFlag(MF_NOBRANCH) || mapdata_flag_gvg2(mapdata)))
 		return false;
 
+	if (item->flag.combat_item && !mapdata->getMapFlag(MF_GVG))
+		return false;
+
 	if( itemdb_group.item_exists( IG_MF_NOTELEPORT, nameid ) ){
 		if( ( mapdata->getMapFlag(MF_NOTELEPORT) || mapdata_flag_gvg2( mapdata ) ) ){
 			clif_skill_teleportmessage( *sd, NOTIFY_MAPINFO_CANT_TP );
