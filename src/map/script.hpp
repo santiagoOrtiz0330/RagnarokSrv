@@ -2026,6 +2026,14 @@ enum e_hat_effects : int16{
 	HAT_EF_WATER_BELOW3,
 	HAT_EF_WATER_BELOW4,
 	HAT_EF_C_VALKYRIE_WING,
+	/* Custom Hateffects 124 = HAT_EF_arcane_aura_A*/
+	HAT_EF_arcane_aura_A,
+	HAT_EF_arcane_aura_B,
+	HAT_EF_gluttony_aura_A,
+	HAT_EF_gluttony_aura_B,
+	HAT_EF_SLOTH_AURA_A,
+	HAT_EF_SLOTH_AURA_B,
+
 	HAT_EF_2019RTC_CELEAURA_TW,
 	HAT_EF_2019RTC1ST_TW,
 	HAT_EF_2019RTC2ST_TW,
@@ -2145,7 +2153,8 @@ enum e_hat_effects : int16{
 	FOOTPRINT_EF_DOGFOOT,
 	HAT_EF_C_AUSPICLOUD,
 	HAT_EF_AURA_OF_GHOST_S,
-	HAT_EF_MAX
+
+	HAT_EF_MAX = 9999
 };
 
 enum e_convertpcinfo_type : uint8 {

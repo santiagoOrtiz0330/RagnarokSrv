@@ -31,6 +31,7 @@ void atcommand_db_load_groups();
 
 bool atcommand_exists(const char* name);
 const char* atcommand_alias_lookup( const std::string& cmd );
+int townskill_reapply(int tid, t_tick tick, int id, intptr_t data);
 
 // @commands (script based)
 struct atcmd_binding_data {

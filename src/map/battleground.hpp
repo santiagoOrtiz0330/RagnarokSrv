@@ -14,6 +14,9 @@
 
 #define MAX_BG_MEMBERS 30
 
+#define BG_CHARID 150001 // char named "Battleground"
+#define BG_TRADE 91 // trade mask of BG consumables
+
 struct s_battleground_member_data {
 	uint16 x, y;
 	map_session_data *sd;

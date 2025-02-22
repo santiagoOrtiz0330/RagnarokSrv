@@ -60,6 +60,7 @@
 #include "storage.hpp"
 #include "trade.hpp"
 #include "vending.hpp"
+#include "skill.hpp"
 
 using namespace rathena;
 
@@ -243,11 +244,141 @@ static const char* atcommand_help_string( const char* command ){
 	return info->help.c_str();
 }
 
-ACMD_FUNC(prueba)
+ACMD_FUNC(townskill) {
+    if (!sd) return false;
+
+	// Verificar si el job es valido
+    if (!(sd->status.class_ == JOB_CLOWN || sd->status.class_ == JOB_GYPSY || sd->status.class_ == JOB_PALADIN))  {
+        clif_displaymessage(sd->fd, "This command can only be used by Clown, Gypsy, or Paladin.");
+        return false;
+    }
+    
+    // Verificar si está en una ciudad
+	map_data *mapdata = map_getmapdata(sd->bl.m);
+	if (mapdata && !mapdata->getMapFlag(MF_TOWN)) {
+		clif_displaymessage(sd->fd, "This command can only be used in towns.");
+        return false;
+    }
+    
+    // Alternar el estado del comando
+    sd->townskill.townskill_active = !sd->townskill.townskill_active;
+    if (sd->townskill.townskill_active) {
+		block_list *src = map_id2bl(sd->bl.id);
+		sc_start(src,&sd->bl,SC_TOWNSKILL,100,0,INFINITE_TICK);
+        clif_displaymessage(sd->fd, "City skill activated. Your songs or gospel will be automatically renewed.");
+		add_timer(gettick()+100,townskill_reapply,sd->bl.id,0);
+    } else {
+		status_change_end(&sd->bl, SC_TOWNSKILL);
+		clif_displaymessage(sd->fd, "City skill deactivated. Your songs or gospel will no longer be automatically renewed.");
+	}
+    
+    return 0;
+}
+
+TIMER_FUNC(townskill_reapply){
+	map_session_data* sd;
+	sd = map_id2sd(id);
+    if (!sd || !sd->townskill.townskill_active) return 0;
+    
+	if (sd->townskill.townskill_skill_id > 0 ){
+		// Verificar si sigue en una ciudad
+		map_data *mapdata = map_getmapdata(sd->bl.m);
+		if (!(mapdata && mapdata->getMapFlag(MF_TOWN))) {
+			sd->townskill.townskill_active = false;
+			status_change_end(&sd->bl, SC_TOWNSKILL);
+			clif_displaymessage(sd->fd, "City skill deactivated: you are no longer in a town.");
+			return 0;
+		}
+
+		unit_data *ud;
+		block_list *src;
+		src = map_id2bl(id);
+		ud = unit_bl2ud(src);
+
+		status_change *sc = status_get_sc(&sd->bl);
+		// Verificar si tiene ATENTION CONCENTRATE si no se vuelve a usar
+		if ((sd->status.class_ == JOB_CLOWN || sd->status.class_ == JOB_GYPSY) && !sc->getSCE(SC_CONCENTRATE)) {
+			unit_skilluse_id(src, sd->bl.id, AC_CONCENTRATION, 10);
+		}
+
+		if ((sd->status.class_ == JOB_CLOWN || sd->status.class_ == JOB_GYPSY) && !sc->getSCE(SC_DANCING)) {
+			unit_skilluse_id(src, sd->bl.id, sd->townskill.townskill_skill_id, sd->townskill.townskill_skill_lv);
+		}
+		
+		// Reaplicar Gospel si es Paladin
+		if (sd->status.class_ == JOB_PALADIN && !sc->getSCE(SC_GOSPEL)) {
+			unit_skilluse_id(src, sd->bl.id, sd->townskill.townskill_skill_id, sd->townskill.townskill_skill_lv);
+		}
+	}
+    add_timer(gettick() + 5000, townskill_reapply, sd->bl.id, 0);
+    
+    return 0;
+}
+
+
+ACMD_FUNC(myinfo)
 {
-	
-	clif_displaymessage(fd, msg_txt(sd,1538));
-	return 0;
+    if (!sd) return -1;
+    ShowInfo("Comando usado por: ID: %d | Nombre: %s | Job: %d\n",
+             sd->status.account_id, sd->status.name, sd->status.class_);
+    return 0;
+}
+
+// Función que iterará sobre las entidades en el área
+int scanarea_sub(struct block_list *bl, va_list ap) {
+    struct map_session_data *sd = va_arg(ap, struct map_session_data *);
+    if (!sd) return 0;
+
+    if (bl->type == BL_PC) { // Si es un jugador
+        struct map_session_data *pl_sd = (struct map_session_data *)bl;
+        ShowInfo("[SCANAREA] Jugador encontrado: ID %d | Nombre: %s | Nivel: %d\n",
+                 pl_sd->status.account_id, pl_sd->status.name, pl_sd->status.base_level);
+        clif_displaymessage(sd->fd, "[SCANAREA] Encontrado jugador:");
+        clif_displaymessage(sd->fd, pl_sd->status.name);
+
+		// Última habilidad utilizada
+		if (pl_sd->last_skill_id > 0) {
+			const char *last_skill_name = skill_get_desc(pl_sd->last_skill_id);
+			char last_skill_msg[128];
+			sprintf(last_skill_msg, "[SCANAREA] Última skill usada: [%d] %s (Nivel: %d)",
+					pl_sd->last_skill_id, last_skill_name, pl_sd->last_skill_lv);
+			clif_displaymessage(sd->fd, last_skill_msg);
+		} else {
+			clif_displaymessage(sd->fd, "[SCANAREA] Última skill usada: Ninguna");
+		}
+
+		// Recorrer las habilidades del jugador
+        clif_displaymessage(sd->fd, "[SCANAREA] Habilidades del jugador:");
+        for (int i = 0; i < MAX_SKILL; i++) {
+            if (pl_sd->status.skill[i].id > 0) { // Si el jugador tiene esta skill
+                const char *skill_name = skill_get_desc(pl_sd->status.skill[i].id);
+                char skill_msg[128];
+                sprintf(skill_msg, "- [%d] %s (Nivel: %d)", pl_sd->status.skill[i].id, skill_name, pl_sd->status.skill[i].lv);
+                clif_displaymessage(sd->fd, skill_msg);
+            }
+        }
+    } 
+    else if (bl->type == BL_MOB) { // Si es un monstruo
+        struct mob_data *md = (struct mob_data *)bl;
+        ShowInfo("[SCANAREA] Mob encontrado: ID %d | Nombre: %s | HP: %d/%d\n",
+                 md->bl.id, md->name, md->status.hp, md->status.max_hp);
+        
+        char mob_msg[128];
+        sprintf(mob_msg, "[SCANAREA] Mob: %s (HP: %d/%d)", md->name, md->status.hp, md->status.max_hp);
+        clif_displaymessage(sd->fd, mob_msg);
+    }
+    return 0;
+}
+
+
+// Función del comando @scanarea
+ACMD_FUNC(scanarea) {
+    int range = 10; // Rango de escaneo en celdas
+
+    // Iterar sobre las entidades cercanas al jugador
+    map_foreachinrange(scanarea_sub, &sd->bl, range, BL_ALL, sd);
+
+    return 0;
 }
 
 
@@ -2102,10 +2233,10 @@ ACMD_FUNC(go)
 		{ MAP_LUTIE,       148, 130 }, //  7=Lutie
 		{ MAP_COMODO,      189, 149 }, //  8=Comodo
 		{ MAP_YUNO,        157, 180 }, //  9=Yuno
-		{ MAP_AMATSU,      115, 144 }, // 10=Amatsu
-		{ MAP_GONRYUN,     169, 112 }, // 11=Gonryun
+		{ MAP_AMATSU,      113, 144 }, // 10=Amatsu
+		{ MAP_GONRYUN,     159, 116 }, // 11=Gonryun
 		{ MAP_UMBALA,       97, 153 }, // 12=Umbala
-		{ MAP_NIFLHEIM,     194, 186 }, // 13=Niflheim
+		{ MAP_NIFLHEIM,     202, 174 }, // 13=Niflheim
 		{ MAP_LOUYANG,     217, 100 }, // 14=Louyang
 #ifdef RENEWAL
 		{ MAP_NOVICE,       18, 26  }, // 15=Training Grounds (Renewal)
@@ -11266,7 +11397,9 @@ void atcommand_basecommands(void) {
 	 **/
 	AtCommandInfo atcommand_base[] = {
 #include <custom/atcommand_def.inc>
-		ACMD_DEF(prueba),
+		ACMD_DEF(townskill),
+		ACMD_DEF(myinfo),
+		ACMD_DEF(scanarea),
 		ACMD_DEF(mapmove),
 		ACMD_DEF(where),
 		ACMD_DEF(jumpto),
