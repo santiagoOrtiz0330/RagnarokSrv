@@ -690,6 +690,8 @@ bool bg_team_join(int32 bg_id, map_session_data *sd, bool is_queue)
 		member.color = sd->status.clothes_color;	// We save clothes color [Grenat]
 #endif
 		sd->bg_id = bg_id;
+		ShowMessage("[BG_EMBLEM_DEBUG] bg_team_join: char=%s guild_id=%d bg_id=%d map=%s\n",
+			sd->status.name, sd->status.guild_id, sd->bg_id, map_mapid2mapname(sd->bl.m));
 		member.sd = sd;
 		member.x = sd->bl.x;
 		member.y = sd->bl.y;

@@ -1460,6 +1460,9 @@ static void clif_set_unit_walking( struct block_list& bl, map_session_data* tsd,
 	p.GUID = status_get_guild_id( &bl );
 	p.GEmblemVer = status_get_emblem_id( &bl );
 #endif
+	if( sd && p.GUID != 0 )
+		ShowMessage("[BG_EMBLEM_DEBUG] walking_pkt: char=%s GUID=%d GEmblemVer=%d bg_id=%d map=%s\n",
+			sd->status.name, p.GUID, p.GEmblemVer, sd->bg_id, map_mapid2mapname(sd->bl.m));
 	p.honor = (sd) ? sd->status.manner : 0;
 	p.virtue = (sc) ? sc->opt3 : 0;
 	p.isPKModeON = (sd && sd->status.karma) ? 1 : 0;
@@ -1741,6 +1744,8 @@ int32 clif_spawn( struct block_list *bl, bool walking ){
 				clif_specialeffect(bl,EF_GIANTBODY2,AREA);
 			else if(sd->state.size==SZ_MEDIUM)
 				clif_specialeffect(bl,EF_BABYBODY2,AREA);
+			ShowMessage("[BG_EMBLEM_DEBUG] clif_spawn: char=%s bg_id=%d map_bg_flag=%d guild_id=%d\n",
+				sd->status.name, sd->bg_id, map_getmapflag(sd->bl.m, MF_BATTLEGROUND), sd->status.guild_id);
 			if( sd->bg_id && map_getmapflag(sd->bl.m, MF_BATTLEGROUND) )
 				clif_sendbgemblem_area(sd);
 			if (sd->spiritcharm_type != CHARM_TYPE_NONE && sd->spiritcharm > 0)
@@ -18516,10 +18521,28 @@ int clif_visual_guild_id(struct block_list *bl)
 	int bg_id;
 	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, (bg_id = bg_team_get_id(bl)));
 
-	if( battle_config.bg_eAmod_mode && (bg_id = bg_team_get_id(bl)) > 0 && bgd != NULL && bgd->g )
+	if( battle_config.bg_eAmod_mode && (bg_id = bg_team_get_id(bl)) > 0 && bgd != NULL && bgd->g ) {
+		// Debug: bg_id set, virtual guild exists — suppress guild emblem
+		if( bl->type == BL_PC ) {
+			TBL_PC *sd = (TBL_PC*)bl;
+			if( sd->status.guild_id )
+				ShowMessage("[BG_EMBLEM_DEBUG] clif_visual_guild_id: SUPPRESSED guild=%d for char=%s bg_id=%d bgd->g=%s\n",
+					sd->status.guild_id, sd->status.name, bg_id, bgd->g->name);
+		}
 		return 0;/*bgd->g->guild_id*/
-	else
-		return status_get_guild_id(bl);
+	} else {
+		int32 real_guild = status_get_guild_id(bl);
+		if( bl->type == BL_PC && real_guild ) {
+			TBL_PC *sd = (TBL_PC*)bl;
+			ShowMessage("[BG_EMBLEM_DEBUG] clif_visual_guild_id: LEAKING guild=%d for char=%s bg_id=%d bgd=%s bgd->g=%s eAmod=%d map_bg=%d\n",
+				real_guild, sd->status.name, bg_id,
+				(bgd != NULL) ? "OK" : "NULL",
+				(bgd != NULL && bgd->g) ? "OK" : "NULL",
+				battle_config.bg_eAmod_mode,
+				map_getmapflag(bl->m, MF_BATTLEGROUND));
+		}
+		return real_guild;
+	}
 }
 
 int clif_visual_emblem_id(struct block_list *bl)
