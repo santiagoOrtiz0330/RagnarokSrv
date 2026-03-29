@@ -8862,6 +8862,8 @@ int32 status_get_guild_id(struct block_list *bl)
 	nullpo_ret(bl);
 	switch (bl->type) {
 		case BL_PC:
+			if (((TBL_PC*)bl)->bg_id && map_getmapflag(bl->m, MF_BATTLEGROUND))
+				return 0;
 			return ((TBL_PC*)bl)->status.guild_id;
 		case BL_PET:
 			if (((TBL_PET*)bl)->master)
@@ -8911,6 +8913,8 @@ int32 status_get_emblem_id(struct block_list *bl)
 	nullpo_ret(bl);
 	switch (bl->type) {
 		case BL_PC:
+			if (((TBL_PC*)bl)->bg_id && map_getmapflag(bl->m, MF_BATTLEGROUND))
+				return 0;
 			return ((TBL_PC*)bl)->guild_emblem_id;
 		case BL_PET:
 			if (((TBL_PET*)bl)->master)

@@ -1,12 +1,52 @@
 //===== rAthena Script =======================================
 //= Mapflag: Battleground map setting.
-//===== Description: ========================================= 
+//===== Description: =========================================
 //= Defines a Battleground map.
 //= Additional parameter '2' shows scoreboard.
-//===== Additional Comments: ================================= 
+//===== Additional Comments: =================================
 //= 1.0 Initial script. [Epoque]
 //============================================================
+
+// Tierra Gorge
+bat_a01	mapflag	battleground	2
+bat_a02	mapflag	battleground	2
+
+// Flavius (Capture the Flag, Death Match, Stone Control)
 bat_b01	mapflag	battleground	2
-bat_c02	mapflag	battleground	2
-bat_a01	mapflag	battleground
 bat_b02	mapflag	battleground	2
+bat_b03	mapflag	battleground	2
+bat_b04	mapflag	battleground	2
+
+// KVM (Krieger Von Midgard)
+bat_c01	mapflag	battleground	2
+bat_c02	mapflag	battleground	2
+bat_c03	mapflag	battleground	2
+
+// Bossnia / Domination / Eye of Storm
+bat_a03	mapflag	battleground	2
+bat_a04	mapflag	battleground	2
+
+// Double Inferno
+region_8	mapflag	battleground	2
+
+// Rush
+rush_cas01	mapflag	battleground	2
+rush_cas02	mapflag	battleground	2
+rush_cas03	mapflag	battleground	2
+rush_cas04	mapflag	battleground	2
+
+// Poring Ball
+bg_ball	mapflag	battleground	2
+
+// Bomberman
+bg_bomber	mapflag	battleground	2
+bg_bomber2	mapflag	battleground	2
+bomberman	mapflag	battleground	2
+
+// Conquest
+schg_cas06	mapflag	battleground	2
+schg_cas07	mapflag	battleground	2
+schg_cas08	mapflag	battleground	2
+arug_cas06	mapflag	battleground	2
+arug_cas07	mapflag	battleground	2
+arug_cas08	mapflag	battleground	2
