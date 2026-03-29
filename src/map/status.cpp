@@ -11015,20 +11015,26 @@ int32 status_change_start(struct block_list* src, struct block_list* bl,enum sc_
 
 		case SC_DEVOTION:
 		{
+			ShowMessage("SC_DEVOTION Inheritance Start\n");
 			block_list* d_bl = map_id2bl( val1 );
 
 			if( d_bl == nullptr ){
 				break;
 			}
+			ShowMessage("SC_DEVOTION 1\n");
 			status_change* d_sc = status_get_sc( d_bl );
-
+			ShowMessage("SC_DEVOTION 2\n");
 			if( d_sc != nullptr && !d_sc->empty() ){
+				ShowMessage("SC_DEVOTION 3\n");
 				// Inherits status from source
 				const enum sc_type types[] = { SC_AUTOGUARD, SC_DEFENDER, SC_REFLECTSHIELD, SC_ENDURE };
+				ShowMessage("SC_DEVOTION 4\n");
 				int32 i = (map_flag_gvg2(bl->m) || map_getmapflag(bl->m, MF_BATTLEGROUND))?2:3;
 				while( i >= 0 ) {
 					enum sc_type type2 = types[i];
+					//ShowMessage("type skill: %d\n", type2);
 					if( d_sc->getSCE(type2) )
+						//ShowMessage("index: %d\n", i);
 						status_change_start(d_bl, bl, type2, 10000, d_sc->getSCE(type2)->val1, 0, 0, (type2 == SC_REFLECTSHIELD ? 1 : 0), skill_get_time(status_db.getSkill(type2),d_sc->getSCE(type2)->val1), (type2 == SC_DEFENDER) ? SCSTART_NOAVOID : SCSTART_NOAVOID|SCSTART_NOICON);
 					i--;
 				}

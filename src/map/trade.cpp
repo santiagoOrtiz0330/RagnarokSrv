@@ -8,6 +8,9 @@
 
 #include <common/nullpo.hpp>
 #include <common/socket.hpp>
+#ifdef BGEXTENDED
+#include <common/utils.hpp>
+#endif
 
 #include "atcommand.hpp"
 #include "battle.hpp"
@@ -369,6 +372,15 @@ void trade_tradeadditem(map_session_data *sd, short index, short amount)
 		clif_tradeitemok(*sd, -2, EXITEM_ADD_SUCCEED); // We pass -2 which will becomes 0 in clif_tradeitemok (Official behavior)
 		return;
 	}
+
+	#ifdef BGEXTENDED
+		if( item->card[0]==CARD0_CREATE && (MakeDWord(item->card[2],item->card[3])== (battle_config.bg_reserved_char_id || battle_config.woe_reserved_char_id )&& !battle_config.bg_can_trade) )
+		{	// "Battleground's Items"
+			clif_displaymessage (sd->fd, msg_txt(sd,260));
+			clif_tradeitemok(*sd, index+2, EXITEM_ADD_FAILED_OVERWEIGHT);
+			return;
+		}
+	#endif
 
 	// Item checks...
 	if( index < 0 || index >= MAX_INVENTORY )

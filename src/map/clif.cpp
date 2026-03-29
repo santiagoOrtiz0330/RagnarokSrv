@@ -357,6 +357,10 @@ static inline unsigned char clif_bl_type(struct block_list *bl, bool walking) {
 					return 0xd; //NPC_ABR_TYPE
 				case AI_BIONIC:
 					return 0xe; //NPC_BIONIC_TYPE
+#ifdef BGEXTENDED
+				case AI_BOMB:
+					return 0x7;
+#endif
 				default:
 					return 0x5; //NPC_MOB_TYPE
 			}
@@ -483,7 +487,11 @@ int32 clif_send(const void* buf, int32 len, struct block_list* bl, enum send_tar
 	int32 x0 = 0, x1 = 0, y0 = 0, y1 = 0, fd;
 	struct s_mapiterator* iter;
 
-	if( type != ALL_CLIENT )
+#ifdef BGEXTENDED
+	if( type != ALL_CLIENT && type != BG_LISTEN)
+#else
+ 	if( type != ALL_CLIENT )
+#endif
 		nullpo_ret(bl);
 
 	sd = BL_CAST(BL_PC, bl);
@@ -491,8 +499,15 @@ int32 clif_send(const void* buf, int32 len, struct block_list* bl, enum send_tar
 	switch(type) {
 
 	case ALL_CLIENT: //All player clients.
+#ifdef BGEXTENDED
+	case BG_LISTEN:
+#endif
 		iter = mapit_getallusers();
 		while( ( tsd = (map_session_data*)mapit_next( iter ) ) != nullptr ){
+#ifdef BGEXTENDED
+		if (type == BG_LISTEN && (tsd->state.bg_listen && !tsd->bg_queue_id))
+			continue;
+#endif
 			if( session_isActive( fd = tsd->fd ) ){
 				WFIFOHEAD( fd, len );
 				memcpy( WFIFOP( fd, 0 ), buf, len );
@@ -1081,7 +1096,12 @@ static void clif_set_unit_idle( struct block_list* bl, bool walking, send_target
 	map_session_data* sd = BL_CAST( BL_PC, bl );
 	status_change* sc = status_get_sc( bl );
 	struct view_data* vd = status_get_viewdata( bl );
+	
+#ifdef BGEXTENDED
+	int32 g_id = clif_visual_guild_id( bl );
+#else
 	int32 g_id = status_get_guild_id( bl );
+#endif
 
 #if PACKETVER < 20091103
 	if( !pcdb_checkid( vd->class_ ) ){
@@ -1246,7 +1266,11 @@ static void clif_spawn_unit( struct block_list *bl, enum send_target target ){
 	map_session_data* sd = BL_CAST( BL_PC, bl );
 	status_change* sc = status_get_sc( bl );
 	struct view_data* vd = status_get_viewdata( bl );
+#ifdef BGEXTENDED
+	int32 g_id = clif_visual_guild_id(bl);
+#else
 	int32 g_id = status_get_guild_id( bl );
+#endif
 
 #if PACKETVER < 20091103
 	if( !pcdb_checkid( vd->class_ ) ){
@@ -2286,6 +2310,16 @@ void clif_selllist( map_session_data& sd){
 			continue;
 		}
 
+#ifdef BGEXTENDED
+		if (sd.inventory.u.items_inventory[i].card[0] == CARD0_CREATE)
+		{ // Do not allow sell BG/WoE Consumables
+			if (battle_config.bg_reserved_char_id && MakeDWord(sd.inventory.u.items_inventory[i].card[2], sd.inventory.u.items_inventory[i].card[3]) == battle_config.bg_reserved_char_id)
+				continue;
+			if (battle_config.woe_reserved_char_id && MakeDWord(sd.inventory.u.items_inventory[i].card[2], sd.inventory.u.items_inventory[i].card[3]) == battle_config.woe_reserved_char_id)
+				continue;
+		}
+#endif
+
 		int32 price;
 
 		if( battle_config.rental_item_novalue && sd.inventory.u.items_inventory[i].expire_time ){
@@ -2599,6 +2633,29 @@ void clif_sendfakenpc( map_session_data& sd, uint32 npcid ){
 
 	clif_send( &p, sizeof( p ), &sd.bl, SELF );
 }
+
+#ifdef BGEXTENDED
+void clif_sendfakenpc2(struct map_session_data *sd,struct map_session_data *fk) {
+	unsigned char *buf;
+	int fd = sd->fd;
+	sd->state.using_fake_npc = 1;
+
+	WFIFOHEAD(fd, packet_len(0x78));
+	buf = WFIFOP(fd,0);
+	memset(WBUFP(buf,0), 0, packet_len(0x78));
+	WBUFW(buf,0)=0x78;
+#if PACKETVER >= 20071106
+	WBUFB(buf,2) = 0; // object type
+	buf = WFIFOP(fd,1);
+#endif
+	WBUFL(buf,2)=fk->bl.id;
+	WBUFW(buf,14)=111;
+	WBUFPOS(buf,46,fk->bl.x,fk->bl.y,fk->ud.dir);
+	WBUFB(buf,49)=5;
+	WBUFB(buf,50)=5;
+	WFIFOSET(fd, packet_len(0x78));
+}
+#endif
 
 
 /// Displays an NPC dialog menu.
@@ -8617,6 +8674,12 @@ void clif_guild_belonginfo( map_session_data& sd ){
 		return;
 	}
 
+
+#ifdef BGEXTENDED
+	if( battle_config.bg_eAmod_mode && sd.bg_id && map_getmapflag(sd.bl.m, MF_BATTLEGROUND) )
+		return;
+#endif
+
 	PACKET_ZC_UPDATE_GDID p = {};
 
 	p.PacketType = HEADER_ZC_UPDATE_GDID;
@@ -8734,32 +8797,52 @@ void clif_guild_masterormember(map_session_data& sd){
 /// 0150 <guild id>.L <level>.L <member num>.L <member max>.L <exp>.L <max exp>.L <points>.L <honor>.L <virtue>.L <emblem id>.L <name>.24B <master name>.24B <manage land>.16B (ZC_GUILD_INFO)
 /// 01b6 <guild id>.L <level>.L <member num>.L <member max>.L <exp>.L <max exp>.L <points>.L <honor>.L <virtue>.L <emblem id>.L <name>.24B <master name>.24B <manage land>.16B <zeny>.L (ZC_GUILD_INFO2)
 /// 0a84 <guild id>.L <level>.L <member num>.L <member max>.L <exp>.L <max exp>.L <points>.L <honor>.L <virtue>.L <emblem id>.L <name>.24B <manage land>.16B <zeny>.L <master char id>.L (ZC_GUILD_INFO3)
-void clif_guild_basicinfo( map_session_data& sd ){
+void clif_guild_basicinfo( map_session_data& sd ) {
+#ifdef BGEXTENDED
+	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, sd.bg_id);
+	const mmo_guild *guild = nullptr;
+
+	if (battle_config.bg_eAmod_mode && sd.bg_id && map_getmapflag(sd.bl.m, MF_BATTLEGROUND))
+	{
+		guild = bgd->g;
+		if (bgd->g == nullptr)
+			return;
+		
+	}
+	else 
+	{
+		guild = &sd.guild->guild;
+		if (sd.guild == nullptr)
+			return;
+	}
+#else
 	if( sd.guild == nullptr ){
 		return;
 	}
-
 	const auto &guild = sd.guild->guild;
+#endif
+
 	PACKET_ZC_GUILD_INFO p = {};
 
 	p.PacketType = HEADER_ZC_GUILD_INFO;
-	p.GDID = guild.guild_id;
-	p.level = guild.guild_lv;
-	p.userNum = guild.connect_member;
-	p.maxUserNum = guild.max_member;
-	p.userAverageLevel = guild.average_lv;
-	p.exp = (uint32)cap_value( guild.exp, 0, MAX_GUILD_EXP );
-	p.maxExp = (uint32)cap_value( guild.next_exp, 0, MAX_GUILD_EXP );
+	p.GDID = guild->guild_id;
+	p.level = guild->guild_lv;
+	p.userNum = guild->connect_member;
+	p.maxUserNum = guild->max_member;
+	p.userAverageLevel = guild->average_lv;
+	p.exp = (uint32)cap_value( guild->exp, 0, MAX_GUILD_EXP );
+	p.maxExp = (uint32)cap_value( guild->next_exp, 0, MAX_GUILD_EXP );
 	p.point = 0; // Tax Points
 	p.honor = 0; // Honor: (left) Vulgar [-100,100] Famed (right)
 	p.virtue = 0; // Virtue: (down) Wicked [-100,100] Righteous (up)
-	p.emblemVersion = guild.emblem_id;
-	safestrncpy( p.guildname, guild.name, sizeof( p.guildname ) );
-	safestrncpy( p.manageLand, msg_txt( &sd, 300 + guild_checkcastles( guild ) ), sizeof( p.manageLand ) );
+	p.emblemVersion = guild->emblem_id;
+	safestrncpy( p.guildname, guild->name, sizeof( p.guildname ) );
+	safestrncpy( p.manageLand, msg_txt( &sd, 300 /*+ guild_checkcastles( guild->guild ) */ ), sizeof( p.manageLand ) );
 	p.zeny = 0;
+
 #if PACKETVER >= 20200902
-	p.masterGID = guild.member[0].char_id; // leader
-	safestrncpy( p.masterName, guild.master, sizeof( p.masterName ) );
+	p.masterGID = guild->member[0].char_id; // leader
+	safestrncpy( p.masterName, guild->master, sizeof( p.masterName ) );
 #elif PACKETVER_MAIN_NUM >= 20161019 || PACKETVER_RE_NUM >= 20160921 || defined(PACKETVER_ZERO)
 	p.masterGID = guild.member[0].char_id; // leader
 #else
@@ -8767,7 +8850,42 @@ void clif_guild_basicinfo( map_session_data& sd ){
 #endif
 
 	clif_send( &p, sizeof( p ), &sd.bl, SELF );
+
 }
+
+#ifdef BGEXTENDED
+void clif_bg_memberlist(struct map_session_data *sd) {
+	int fd, c = 0;
+	nullpo_retv(sd);
+
+	if( (fd = sd->fd) == 0 )
+		return;
+	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, sd->bg_id);
+	if( !(battle_config.bg_eAmod_mode && sd->bg_id && bgd != NULL) )
+		return;
+
+	WFIFOHEAD(fd,bgd->count * 34 + 4);
+	WFIFOW(fd,0) = 0xaa5;
+	for (const auto &pl_sd : bgd->members) {
+		if( ( sd = pl_sd.sd ) == nullptr )
+			continue;
+		WFIFOL(fd, c * 34 + 4) = pl_sd.sd->status.account_id;
+		WFIFOL(fd, c * 34 + 8) = pl_sd.sd->status.char_id;
+		WFIFOW(fd, c * 34 + 12) = pl_sd.sd->status.hair;
+		WFIFOW(fd, c * 34 + 14) = pl_sd.sd->status.hair_color;
+		WFIFOW(fd, c * 34 + 16) = pl_sd.sd->status.sex;
+		WFIFOW(fd, c * 34 + 18) = pl_sd.sd->status.class_;
+		WFIFOW(fd, c * 34 + 20) = pl_sd.sd->status.base_level;
+		WFIFOL(fd, c * 34 + 22) = pl_sd.sd->bg_kills; // Exp slot used to show kills
+		WFIFOL(fd, c * 34 + 26) = 1; // Online
+		WFIFOL(fd, c * 34 + 30) = (pl_sd.sd->status.char_id == bgd->leader_char_id) ? 0 : 1; // Position
+		WFIFOL(fd,c*34+34)=(uint32)time(NULL);
+		c++;
+	}
+	WFIFOW(fd, 2)=c * 34 + 4;
+	WFIFOSET(fd,WFIFOW(fd,2));
+}
+#endif
 
 
 /// Guild alliance and opposition list 
@@ -8775,9 +8893,18 @@ void clif_guild_basicinfo( map_session_data& sd ){
 void clif_guild_allianceinfo(map_session_data& sd){
 	auto &g = sd.guild;
 
+#ifdef BGEXTENDED
+	if( !(battle_config.bg_eAmod_mode && sd.bg_id && g != NULL ))
+		g = sd.guild;
+
+	if( g == NULL )
+		return;
+#else
 	if (g == nullptr){
 		return;
 	}
+#endif
+
 
 	PACKET_ZC_MYGUILD_BASIC_INFO* p = reinterpret_cast<PACKET_ZC_MYGUILD_BASIC_INFO*>( packet_buffer );
 
@@ -8817,6 +8944,14 @@ void clif_guild_memberlist( map_session_data& sd ){
 	if( sd.guild == nullptr ){
 		return;
 	}
+
+#ifdef BGEXTENDED
+	if( battle_config.bg_eAmod_mode && sd.bg_id && map_getmapflag(sd.bl.m, MF_BATTLEGROUND) )
+	{
+		clif_bg_memberlist(&sd);
+		return;
+	}
+#endif
 
 	const auto &guild = sd.guild->guild;
 	PACKET_ZC_MEMBERMGR_INFO* p = reinterpret_cast<PACKET_ZC_MEMBERMGR_INFO*>( packet_buffer );
@@ -8973,9 +9108,15 @@ void clif_guild_memberpositionchanged(const struct mmo_guild &g, int32 idx)
 /// 0152 <packet len>.W <guild id>.L <emblem id>.L <emblem data>.?B (ZC_GUILD_EMBLEM_IMG)
 void clif_guild_emblem(const map_session_data &sd, const struct mmo_guild &g)
 {
+#ifdef BGEXTENDED
+	if(battle_config.bg_eAmod_mode && sd.bg_id && map_getmapflag(sd.bl.m, MF_BATTLEGROUND) )
+		return;
+#endif
 	int32 fd = sd.fd;
 	if( g.emblem_len <= 0 )
 		return;
+	
+	ShowMessage("WINNER RO: 9119- len : %d.\n", g.emblem_len);
 
 	WFIFOHEAD(fd,g.emblem_len+12);
 	WFIFOW(fd,0)=0x152;
@@ -8993,13 +9134,23 @@ void clif_guild_emblem(const map_session_data &sd, const struct mmo_guild &g)
 /// 0b47 <guild id>.L <version>.L <AID>.L (ZC_ACK_ADD_NEW_EMBLEM)
 void clif_guild_emblem_area(struct block_list* bl)
 {
+#ifdef BGEXTENDED
+	TBL_PC*sd = map_id2sd(bl->id);
+	if(sd && battle_config.bg_eAmod_mode && sd->bg_id && map_getmapflag(sd->bl.m, MF_BATTLEGROUND) )
+		return;
+#endif
 	// TODO this packet doesn't force the update of ui components that have the emblem visible
 	//      (emblem in the flag npcs and emblem over the head in agit maps) [FlavioJS]
 	PACKET_ZC_CHANGE_GUILD p{};
 
 	p.packetType = HEADER_ZC_CHANGE_GUILD;
+#ifdef BGEXTENDED
+	p.guild_id = clif_visual_guild_id(bl);
+	p.emblem_id = clif_visual_emblem_id(bl);
+#else
 	p.guild_id = status_get_guild_id(bl);
 	p.emblem_id = status_get_emblem_id(bl);
+#endif
 	p.AID = bl->id;
 
 	clif_send(&p, sizeof(p), bl, AREA);
@@ -9011,21 +9162,52 @@ void clif_guild_emblem_area(struct block_list* bl)
 void clif_guild_skillinfo( map_session_data& sd ){
 	auto& g = sd.guild;
 
+	auto& fd = sd.fd;
+
+#ifdef BGEXTENDED
+	if( ((g = sd.guild) == NULL) && !(battle_config.bg_eAmod_mode && sd.bg_id && map_getmapflag(sd.bl.m, MF_BATTLEGROUND))  )
+		return;
+#else
 	if( g == nullptr ){
 		return;
 	}
+#endif
 
 	PACKET_ZC_GUILD_SKILLINFO* p = reinterpret_cast<PACKET_ZC_GUILD_SKILLINFO*>( packet_buffer );
 
 	p->PacketType = HEADER_ZC_GUILD_SKILLINFO;
 	p->PacketLength = sizeof( *p );
-	p->skillPoint = g->guild.skill_point;
+#ifdef BGEXTENDED
+	if(battle_config.bg_eAmod_mode && sd.bg_id && map_getmapflag(sd.bl.m, MF_BATTLEGROUND))
+		p->skillPoint = 0;
+	else
+#endif
+		p->skillPoint = g->guild.skill_point;
 
 	for( size_t i = 0, c = 0; i < MAX_GUILDSKILL; i++ ){
 		if( g->guild.skill[i].id <= 0 ){
 			continue;
 		}
+#ifdef BGEXTENDED
+		if(battle_config.bg_eAmod_mode && sd.bg_id && map_getmapflag(sd.bl.m, MF_BATTLEGROUND))
+		{
+			int id = 10000+i;
+			if (id < 10010 || (id >= 10014 && id <= 10016) || id > 10019 )
+				continue;
 
+			ShowMessage("GUILD SKILL ID %d.\n" , id);
+			
+			int p = 6 + c*37;
+			WFIFOW(fd,p+0) = id;
+			WFIFOL(fd,p+2) = skill_get_inf(id);
+			WFIFOW(fd,p+6) = 1;
+			WFIFOW(fd,p+8) = 1;
+			WFIFOW(fd,p+10) = skill_get_range(id, 1);
+			safestrncpy(WFIFOCP(fd,p+12), skill_get_name(id), NAME_LENGTH);
+			WFIFOB(fd,p+36)= 0;
+			c++;
+		} else
+#endif
 		if( !guild_check_skill_require( g->guild, g->guild.skill[i].id ) ){
 			continue;
 		}
@@ -9926,6 +10108,29 @@ void clif_name( struct block_list* src, struct block_list *bl, send_target targe
 				safestrncpy( packet.party_name, p->party.name, NAME_LENGTH );
 			}
 
+#ifdef BGEXTENDED
+			if (battle_config.bg_eAmod_mode && sd->bg_id) {
+				std::shared_ptr<s_battleground_data> bgteam = util::umap_find(bg_team_db, sd->bg_id);
+				if (bgteam) {
+					int ps = (sd->status.char_id == bgteam->leader_char_id) ? 0 : 1;
+					//safestrncpy( packet.party_name, bgteam->g->name, NAME_LENGTH );
+					safestrncpy(packet.guild_name, bgteam->g->name, NAME_LENGTH);
+					safestrncpy(packet.position_name, bgteam->g->position[ps].name, NAME_LENGTH);
+				}
+			} else if( sd->guild ){
+				int32 position;
+
+				// Will get the position of the guild the player is in
+				position = guild_getposition(*sd);
+
+				safestrncpy( packet.guild_name, sd->guild->guild.name, NAME_LENGTH );
+				safestrncpy( packet.position_name, sd->guild->guild.position[position].name, NAME_LENGTH );
+			}else if( sd->clan ){
+				safestrncpy( packet.position_name, sd->clan->name, NAME_LENGTH );
+			}
+#else
+
+
 			if( sd->guild ){
 				int32 position;
 
@@ -9937,6 +10142,7 @@ void clif_name( struct block_list* src, struct block_list *bl, send_target targe
 			}else if( sd->clan ){
 				safestrncpy( packet.position_name, sd->clan->name, NAME_LENGTH );
 			}
+#endif
 
 #if PACKETVER_MAIN_NUM >= 20150225 || PACKETVER_RE_NUM >= 20141126 || defined( PACKETVER_ZERO )
 			packet.title_id = sd->status.title_id; // Title ID
@@ -9999,7 +10205,7 @@ void clif_name( struct block_list* src, struct block_list *bl, send_target targe
 				safestrncpy( packet.position_name, md->guardian_data->castle->castle_name, NAME_LENGTH );
 
 				clif_send(&packet, sizeof(packet), src, target);
-			}else if( battle_config.show_mob_info ){
+			}else if( battle_config.show_mob_info && !map_getmapflag( bl->m, MF_HIDEMOBHPBAR )){
 				PACKET_ZC_ACK_REQNAMEALL packet = { 0 };
 
 				packet.packet_id = HEADER_ZC_ACK_REQNAMEALL;
@@ -10345,6 +10551,10 @@ void clif_msg(map_session_data* sd, uint16 id)
 	nullpo_retv(sd);
 	fd = sd->fd;
 
+#ifdef BGEXTENDED
+	if (sd->bg_id && id == 0 /*id == WORK_IN_PROGRESS*/)
+		return;
+#endif
 	WFIFOHEAD(fd, packet_len(0x291));
 	WFIFOW(fd, 0) = 0x291;
 	WFIFOW(fd, 2) = id;  // zero-based msgstringtable.txt index
@@ -10533,7 +10743,10 @@ static bool clif_process_message(map_session_data* sd, bool whisperFormat, char*
 		sd->idletime_hom = last_tick;
 	if (battle_config.mer_idle_no_share && sd->md && battle_config.idletime_mer_option&IDLE_CHAT)
 		sd->idletime_mer = last_tick;
-
+#ifdef BGEXTENDED
+	if (sd && sd->bg_id)
+		pc_update_last_action(sd);
+#endif
 	//achievement_update_objective(sd, AG_CHATTING, 1, 1); // !TODO: Confirm how this achievement is triggered
 
 	return true;
@@ -10759,8 +10972,14 @@ void clif_parse_LoadEndAck(int32 fd,map_session_data *sd)
 
 	// guild
 	// (needs to go before clif_spawn() to show guild emblems correctly)
+#ifdef BGEXTENDED
+	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, sd->bg_id);
+	if(sd->status.guild_id && !(battle_config.bg_eAmod_mode && sd->bg_id && !map_getmapflag(sd->bl.m, MF_BATTLEGROUND)))
+		guild_send_memberinfoshort(sd,1);
+#else
 	if(sd->status.guild_id)
 		guild_send_memberinfoshort(sd,1);
+#endif
 
 	struct map_data *mapdata = map_getmapdata(sd->bl.m);
 
@@ -11009,6 +11228,11 @@ void clif_parse_LoadEndAck(int32 fd,map_session_data *sd)
 			if( map_getmapflag(sd->bl.m, MF_BATTLEGROUND) == 2 )
 				clif_bg_updatescore_single(sd);
 		}
+
+#ifdef BGEXTENDED
+		if( mapdata->getMapFlag(MF_BG_TOPSCORE))
+			clif_bg_updatescore_single(sd);
+#endif
 
 		if( mapdata->getMapFlag(MF_ALLOWKS) && !mapdata_flag_ks(mapdata) )
 		{
@@ -11355,7 +11579,10 @@ void clif_parse_WalkToXY(int32 fd, map_session_data *sd)
 		sd->idletime_hom = last_tick;
 	if (battle_config.mer_idle_no_share && sd->md && battle_config.idletime_mer_option&IDLE_WALK)
 		sd->idletime_mer = last_tick;
-
+#ifdef BGEXTENDED
+	if (sd && sd->bg_id)
+		pc_update_last_action(sd);
+#endif
 	unit_walktoxy(&sd->bl, x, y, 4);
 }
 
@@ -11583,6 +11810,10 @@ void clif_parse_Emotion(int32 fd, map_session_data *sd){
 		if (battle_config.mer_idle_no_share && sd->md && battle_config.idletime_mer_option&IDLE_EMOTION)
 			sd->idletime_mer = last_tick;
 
+#ifdef BGEXTENDED
+		if (sd && sd->bg_id)
+			pc_update_last_action(sd);
+#endif
 		if (sd->state.block_action & PCBLOCK_EMOTION) {
 			clif_skill_fail( *sd, 1, USESKILL_FAIL_LEVEL, 1 );
 			return;
@@ -11661,6 +11892,10 @@ void clif_parse_ActionRequest_sub( map_session_data& sd, uint8 action_type, int3
 			sd.idletime_hom = last_tick;
 		if (battle_config.mer_idle_no_share && sd.md && battle_config.idletime_mer_option&IDLE_ATTACK)
 			sd.idletime_mer = last_tick;
+#ifdef BGEXTENDED
+		if (&sd && sd.bg_id)
+			pc_update_last_action(&sd);
+#endif
 		unit_attack(&sd.bl, target_id, action_type != 0);
 		break;
 	case DMG_SIT_DOWN: // sitdown
@@ -11987,7 +12222,10 @@ void clif_parse_DropItem(int32 fd, map_session_data *sd){
 			sd->idletime_hom = last_tick;
 		if (battle_config.mer_idle_no_share && sd->md && battle_config.idletime_mer_option&IDLE_DROPITEM)
 			sd->idletime_mer = last_tick;
-
+#ifdef BGEXTENDED
+		if (sd && sd->bg_id)
+			pc_update_last_action(sd);
+#endif
 		return;
 	}
 
@@ -12021,6 +12259,10 @@ void clif_parse_UseItem(int32 fd, map_session_data *sd)
 		sd->idletime_hom = last_tick;
 	if (battle_config.mer_idle_no_share && sd->md && battle_config.idletime_mer_option&IDLE_USEITEM)
 		sd->idletime_mer = last_tick;
+#ifdef BGEXTENDED
+	if (sd && sd->bg_id)
+		pc_update_last_action(sd);
+#endif
 	n = RFIFOW(fd,packet_db[RFIFOW(fd,0)].pos[0])-2;
 
 	if(n <0 || n >= MAX_INVENTORY)
@@ -12074,6 +12316,10 @@ void clif_parse_EquipItem( int32 fd, map_session_data* sd ){
 		sd->idletime_hom = last_tick;
 	if (battle_config.mer_idle_no_share && sd->md && battle_config.idletime_mer_option&IDLE_USEITEM)
 		sd->idletime_mer = last_tick;
+#ifdef BGEXTENDED
+	if (sd && sd->bg_id)
+		pc_update_last_action(sd);
+#endif
 
 	//Client doesn't send the position for ammo.
 	if(sd->inventory_data[index]->type == IT_AMMO)
@@ -12819,6 +13065,10 @@ void clif_parse_skill_toid( map_session_data* sd, uint16 skill_id, uint16 skill_
 		sd->idletime_hom = last_tick;
 	if (battle_config.mer_idle_no_share && sd->md && battle_config.idletime_mer_option&IDLE_USESKILLTOID)
 		sd->idletime_mer = last_tick;
+#ifdef BGEXTENDED
+	if (sd && sd->bg_id)
+		pc_update_last_action(sd);
+#endif
 
 	if( sd->npc_id ){
 		if( pc_hasprogress( sd, WIP_DISABLE_SKILLITEM ) || !sd->npc_item_flag || !( inf & INF_SELF_SKILL ) ){
@@ -12885,7 +13135,27 @@ void clif_parse_skill_toid( map_session_data* sd, uint16 skill_id, uint16 skill_
 	sd->skillitem = sd->skillitemlv = 0;
 
 	if( SKILL_CHK_GUILD(skill_id) ) {
+#ifdef BGEXTENDED
+		if (map_getmapflag(sd->bl.m, MF_BATTLEGROUND) && sd->bg_id) {
+			int idx = skill_id - GD_SKILLBASE;
+			if( idx < 0 || idx >= MAX_GUILDSKILL )
+				skill_lv = 0;
+			std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, sd->bg_id);
+			if( sd->status.char_id == bgd->leader_char_id || skill_id == GD_CHARGESHOUT_BEATING )
+			{
+				if (bg_block_skill_status(sd, skill_id))
+					skill_lv = 0;
+				else
+					skill_lv = 1;
+			}
+			else
+				skill_lv = 0;
+		}
+		else if( sd->state.gmaster_flag || skill_id == GD_CHARGESHOUT_BEATING)
+
+#else
 		if (sd->guild != nullptr && (sd->state.gmaster_flag || skill_id == GD_CHARGESHOUT_BEATING))
+#endif
 			skill_lv = guild_checkskill(sd->guild->guild, skill_id);
 		else
 			skill_lv = 0;
@@ -12950,6 +13220,11 @@ static void clif_parse_UseSkillToPosSub( int32 fd, map_session_data& sd, uint16 
 		sd.idletime_hom = last_tick;
 	if (battle_config.mer_idle_no_share && sd.md && battle_config.idletime_mer_option&IDLE_USESKILLTOPOS)
 		sd.idletime_mer = last_tick;
+
+#ifdef BGEXTENDED
+	if (&sd && sd.bg_id)
+		pc_update_last_action(&sd);
+#endif
 
 	if( skill_isNotOk(skill_id, sd) )
 		return;
@@ -14142,8 +14417,14 @@ static void clif_parse_GuildCheckMaster(int32 fd, map_session_data *sd){
 void clif_parse_GuildRequestInfo(int32 fd, map_session_data *sd)
 {
 	int32 type = RFIFOL(fd,packet_db[RFIFOW(fd,0)].pos[0]);
-	if( !sd->status.guild_id && !sd->bg_id )
+
+	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, sd->bg_id);
+	
+	ShowMessage("WINNER RO: Mostrar guild info %d.\n" , sd->bg_id);
+	//if( !sd->status.guild_id && !sd->bg_id )
+	if( !sd->status.guild_id && bgd->g == nullptr )
 		return;
+
 
 	switch( type )
 	{
@@ -14231,6 +14512,10 @@ void clif_parse_GuildChangeMemberPosition( int32 fd, map_session_data *sd ){
 /// 0151 <guild id>.L
 void clif_parse_GuildRequestEmblem(int32 fd,map_session_data *sd)
 {
+#ifdef BGEXTENDED
+	if(battle_config.bg_eAmod_mode && sd->bg_id && map_getmapflag(sd->bl.m, MF_BATTLEGROUND) )
+		return;
+#endif
 	int32 guild_id = RFIFOL(fd,packet_db[RFIFOW(fd,0)].pos[0]);
 
 	auto g = guild_search(guild_id);
@@ -18219,6 +18504,154 @@ void clif_readbook(int32 fd, int32 book_id, int32 page)
 
 /// Battlegrounds
 ///
+#ifdef BGEXTENDED
+int clif_visual_guild_id(struct block_list *bl)
+{
+	nullpo_ret(bl);
+	int bg_id;
+	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, (bg_id = bg_team_get_id(bl)));
+
+	if( battle_config.bg_eAmod_mode && (bg_id = bg_team_get_id(bl)) > 0 && bgd != NULL && bgd->g )
+		return 0;/*bgd->g->guild_id*/
+	else
+		return status_get_guild_id(bl);
+}
+
+int clif_visual_emblem_id(struct block_list *bl)
+{
+	nullpo_ret(bl);
+	int bg_id;
+	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, (bg_id = bg_team_get_id(bl)));
+
+	if( battle_config.bg_eAmod_mode && (bg_id = bg_team_get_id(bl)) > 0 && bgd != NULL && bgd->g )
+		return 0;	//Remove emblem because we add clan emblem instead [Grenat]
+	else
+		return status_get_emblem_id(bl);
+}
+
+void clif_bg_updatescore_team(struct map_session_data *sd)
+{
+	unsigned char buf[6];
+	int i, m;
+
+	nullpo_retv(sd);
+
+	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, sd->bg_id);
+	if( (m = map_mapindex2mapid(sd->mapindex)) < 0 )
+		return;
+
+	WBUFW(buf,0) = 0x2de;
+	WBUFW(buf,2) = bgd->team_score;
+	WBUFW(buf,4) = map[m].bgscore_top;
+
+	for (i = 0; i < MAX_BG_MEMBERS; i++)
+	{
+		if ((sd = bgd->members[i].sd) == NULL || sd->bl.m != m)
+			continue;
+
+		clif_send(buf, packet_len(0x2de), &sd->bl, SELF);
+	}
+}
+
+void clif_bg_leave_single(struct map_session_data *sd, const char *name, const char *mes)
+{
+	int fd;
+	nullpo_retv(sd);
+
+	fd = sd->fd;
+	WFIFOHEAD(fd, 66);
+	WFIFOW(fd, 0) = 0x15a;
+	memcpy(WFIFOP(fd, 2), name, NAME_LENGTH);
+	memcpy(WFIFOP(fd, 26), mes, 40);
+	WFIFOSET(fd, 66);
+}
+
+void clif_bg_expulsion_single(struct map_session_data *sd, const char *name, const char *mes)
+{
+	int fd;
+
+#if PACKETVER < 20100803
+	const unsigned short cmd = 0x15c;
+#else
+	const unsigned short cmd = 0x839;
+#endif
+
+	nullpo_retv(sd);
+
+	fd = sd->fd;
+
+	WFIFOHEAD(fd, packet_len(cmd));
+	WFIFOW(fd, 0) = cmd;
+	safestrncpy((char*)WFIFOP(fd, 2), name, NAME_LENGTH);
+	safestrncpy((char*)WFIFOP(fd,26), mes, 40);
+#if PACKETVER < 20100803
+	safestrncpy((char*)WFIFOP(fd,66), "", NAME_LENGTH);
+#endif
+	WFIFOSET(fd, packet_len(cmd));
+}
+
+void clif_bg_belonginfo(struct map_session_data *sd)
+{
+	int fd;
+	struct mmo_guild *g;
+	nullpo_retv(sd);
+
+	if( !(battle_config.bg_eAmod_mode && sd->bg_id && (g = bg_guild_get(sd->bg_id)) != NULL) )
+		return;
+
+	fd = sd->fd;
+	WFIFOHEAD(fd,packet_len(0x16c));
+	WFIFOW(fd,0) = 0x16c;
+	WFIFOL(fd,2) = g->guild_id;
+	WFIFOL(fd,6) = 0;
+	WFIFOL(fd,10) = 0;
+	WFIFOB(fd,14) = 0;
+	WFIFOL(fd,15) = 0;
+	safestrncpy(WFIFOCP(fd,19),g->name,NAME_LENGTH);
+	WFIFOSET(fd,packet_len(0x16c));
+}
+
+void clif_bg_emblem(struct map_session_data *sd, struct mmo_guild *g)
+{
+	int fd;
+	ShowMessage("WINNER RO: 18617.\n");
+
+	nullpo_retv(sd);
+	nullpo_retv(g);
+
+	ShowMessage("WINNER RO: 18619.\n");
+#ifdef BGEXTENDED
+	if(battle_config.bg_eAmod_mode && sd->bg_id && map_getmapflag(sd->bl.m, MF_BATTLEGROUND) )
+		return;
+#endif
+	if( g->emblem_len <= 0 )
+		return;
+
+	ShowMessage("WINNER RO: 18627.\n");
+	ShowMessage("WINNER RO: char id - %d.\n", sd->status.char_id);
+	fd = sd->fd;
+	WFIFOHEAD(fd,g->emblem_len+12);
+	WFIFOW(fd,0)=0x152;
+	WFIFOW(fd,2)=g->emblem_len+12;
+	WFIFOL(fd,4)=g->guild_id;
+	WFIFOL(fd,8)=g->emblem_id;
+	memcpy(WFIFOP(fd,12),g->emblem_data,g->emblem_len);
+	WFIFOSET(fd,WFIFOW(fd,2));
+	ShowMessage("WINNER RO: 18640.\n");
+
+}
+
+void clif_bg_leave(struct map_session_data *sd, const char *name, const char *mes)
+{
+	unsigned char buf[128];
+	nullpo_retv(sd);
+
+	WBUFW(buf,0)=0x15a;
+	memcpy(WBUFP(buf, 2),name,NAME_LENGTH);
+	memcpy(WBUFP(buf,26),mes,40);
+	clif_send(buf,packet_len(0x15a),&sd->bl,BG);
+}
+#endif
 
 /// Updates HP bar of a camp member.
 /// 02e0 <account id>.L <name>.24B <hp>.W <max hp>.W (ZC_BATTLEFIELD_NOTIFY_HP)
@@ -18350,11 +18783,23 @@ void clif_bg_updatescore_single(map_session_data *sd)
 	fd = sd->fd;
 
 	struct map_data *mapdata = map_getmapdata(sd->bl.m);
-
+#ifdef BGEXTENDED
+	std::shared_ptr<s_battleground_data> bg = util::umap_find(bg_team_db, sd->bg_id);
+#endif
 	WFIFOHEAD(fd,packet_len(0x2de));
 	WFIFOW(fd,0) = 0x2de;
+#ifdef BGEXTENDED
+	if (map_getmapflag(sd->bl.m, MF_BATTLEGROUND) == 2 || map_getmapflag(sd->bl.m, MF_BG_TOPSCORE)) {
+		WFIFOW(fd,2) = mapdata->bgscore_lion;
+		WFIFOW(fd,4) = mapdata->bgscore_eagle;
+	} else if( map_getmapflag(sd->bl.m, MF_BATTLEGROUND) == 3 && bg != NULL ) {
+		WFIFOW(fd,2) = bg->team_score;
+		WFIFOW(fd,4) = mapdata->bgscore_top;
+	}
+#else
 	WFIFOW(fd,2) = mapdata->bgscore_lion;
 	WFIFOW(fd,4) = mapdata->bgscore_eagle;
+#endif
 	WFIFOSET(fd,packet_len(0x2de));
 }
 
