@@ -1453,8 +1453,13 @@ static void clif_set_unit_walking( struct block_list& bl, map_session_data* tsd,
 #if PACKETVER >= 20101124
 	p.robe = vd->robe;
 #endif
+#ifdef BGEXTENDED
+	p.GUID = clif_visual_guild_id( &bl );
+	p.GEmblemVer = clif_visual_emblem_id( &bl );
+#else
 	p.GUID = status_get_guild_id( &bl );
 	p.GEmblemVer = status_get_emblem_id( &bl );
+#endif
 	p.honor = (sd) ? sd->status.manner : 0;
 	p.virtue = (sc) ? sc->opt3 : 0;
 	p.isPKModeON = (sd && sd->status.karma) ? 1 : 0;
