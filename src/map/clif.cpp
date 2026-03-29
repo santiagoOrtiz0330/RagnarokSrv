@@ -1746,8 +1746,12 @@ int32 clif_spawn( struct block_list *bl, bool walking ){
 				clif_specialeffect(bl,EF_BABYBODY2,AREA);
 			ShowMessage("[BG_EMBLEM_DEBUG] clif_spawn: char=%s bg_id=%d map_bg_flag=%d guild_id=%d\n",
 				sd->status.name, sd->bg_id, map_getmapflag(sd->bl.m, MF_BATTLEGROUND), sd->status.guild_id);
-			if( sd->bg_id && map_getmapflag(sd->bl.m, MF_BATTLEGROUND) )
+			if( sd->bg_id && map_getmapflag(sd->bl.m, MF_BATTLEGROUND) ) {
 				clif_sendbgemblem_area(sd);
+				// Clear client-side guild emblem cache for all nearby players so
+				// the BG team emblem (not the real guild emblem) is shown overhead.
+				clif_guild_emblem_area(&sd->bl);
+			}
 			if (sd->spiritcharm_type != CHARM_TYPE_NONE && sd->spiritcharm > 0)
 				clif_spiritcharm( *sd );
 			if (sd->status.robe)
@@ -9145,9 +9149,12 @@ void clif_guild_emblem(const map_session_data &sd, const struct mmo_guild &g)
 void clif_guild_emblem_area(struct block_list* bl)
 {
 #ifdef BGEXTENDED
-	TBL_PC*sd = map_id2sd(bl->id);
-	if(sd && battle_config.bg_eAmod_mode && sd->bg_id && map_getmapflag(sd->bl.m, MF_BATTLEGROUND) )
-		return;
+	// Do NOT early-return for BG players. We intentionally fall through so that
+	// ZC_CHANGE_GUILD is sent to AREA with guild_id=0 / emblem_id=0.
+	// This clears the client-side cached guild emblem state that was set before
+	// the player entered the Battleground, preventing the real guild emblem from
+	// showing overhead inside BG maps. clif_visual_guild_id/emblem_id return 0
+	// for active BG players, so the packet will carry the correct zero values.
 #endif
 	// TODO this packet doesn't force the update of ui components that have the emblem visible
 	//      (emblem in the flag npcs and emblem over the head in agit maps) [FlavioJS]
