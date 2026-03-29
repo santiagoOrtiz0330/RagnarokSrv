@@ -18525,43 +18525,28 @@ void clif_readbook(int32 fd, int32 book_id, int32 page)
 int clif_visual_guild_id(struct block_list *bl)
 {
 	nullpo_ret(bl);
-	int bg_id;
-	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, (bg_id = bg_team_get_id(bl)));
+	int bg_id = bg_team_get_id(bl);
 
-	if( battle_config.bg_eAmod_mode && (bg_id = bg_team_get_id(bl)) > 0 && bgd != NULL && bgd->g ) {
-		// Debug: bg_id set, virtual guild exists — suppress guild emblem
-		if( bl->type == BL_PC ) {
-			TBL_PC *sd = (TBL_PC*)bl;
-			if( sd->status.guild_id )
-				ShowMessage("[BG_EMBLEM_DEBUG] clif_visual_guild_id: SUPPRESSED guild=%d for char=%s bg_id=%d bgd->g=%s\n",
-					sd->status.guild_id, sd->status.name, bg_id, bgd->g->name);
-		}
-		return 0;/*bgd->g->guild_id*/
-	} else {
-		int32 real_guild = status_get_guild_id(bl);
-		if( bl->type == BL_PC && real_guild ) {
-			TBL_PC *sd = (TBL_PC*)bl;
-			ShowMessage("[BG_EMBLEM_DEBUG] clif_visual_guild_id: LEAKING guild=%d for char=%s bg_id=%d bgd=%s bgd->g=%s eAmod=%d map_bg=%d\n",
-				real_guild, sd->status.name, bg_id,
-				(bgd != NULL) ? "OK" : "NULL",
-				(bgd != NULL && bgd->g) ? "OK" : "NULL",
-				battle_config.bg_eAmod_mode,
-				map_getmapflag(bl->m, MF_BATTLEGROUND));
-		}
-		return real_guild;
-	}
+	// Suppress real guild for any BG player on a BG map, regardless of whether
+	// the virtual BG guild (bgd->g) is initialized. This prevents the real guild
+	// emblem from showing on entry, respawn, relog, or any other state update.
+	if( battle_config.bg_eAmod_mode && bg_id > 0 && map_getmapflag(bl->m, MF_BATTLEGROUND) )
+		return 0;
+
+	return status_get_guild_id(bl);
 }
 
 int clif_visual_emblem_id(struct block_list *bl)
 {
 	nullpo_ret(bl);
-	int bg_id;
-	std::shared_ptr<s_battleground_data> bgd = util::umap_find(bg_team_db, (bg_id = bg_team_get_id(bl)));
+	int bg_id = bg_team_get_id(bl);
 
-	if( battle_config.bg_eAmod_mode && (bg_id = bg_team_get_id(bl)) > 0 && bgd != NULL && bgd->g )
-		return 0;	//Remove emblem because we add clan emblem instead [Grenat]
-	else
-		return status_get_emblem_id(bl);
+	// Suppress real guild emblem for any BG player on a BG map, regardless of
+	// whether the virtual BG guild (bgd->g) is initialized.
+	if( battle_config.bg_eAmod_mode && bg_id > 0 && map_getmapflag(bl->m, MF_BATTLEGROUND) )
+		return 0;
+
+	return status_get_emblem_id(bl);
 }
 
 void clif_bg_updatescore_team(struct map_session_data *sd)
